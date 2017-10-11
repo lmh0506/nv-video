@@ -2,8 +2,9 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 
-import { Button } from 'element-ui'
-Vue.use(Button)
+import { Menu, MenuItem } from 'element-ui'
+Vue.use(Menu)
+Vue.use(MenuItem)
 
 Vue.config.productionTip = false
 
