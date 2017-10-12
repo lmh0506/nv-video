@@ -6,6 +6,9 @@ const onerror = require('koa-onerror')
 const bodyparser = require('koa-bodyparser')
 const logger = require('koa-logger')
 
+const mongoose = require('mongoose')
+mongoose.connect('mongodb://localhost/nvVideo',{useMongoClient:true})
+
 // error handler
 onerror(app)
 

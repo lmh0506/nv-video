@@ -1,2 +1,5 @@
 build/*.js
 config/*.js
+server/*.js
+server/*.css
+server/*.html
