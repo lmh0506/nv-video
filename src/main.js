@@ -8,7 +8,8 @@ import {
   Form,
   FormItem,
   Input,
-  Button
+  Button,
+  Checkbox
 } from 'element-ui'
 
 Vue.use(Menu)
@@ -17,6 +18,7 @@ Vue.use(Form)
 Vue.use(FormItem)
 Vue.use(Input)
 Vue.use(Button)
+Vue.use(Checkbox)
 
 Vue.config.productionTip = false
 

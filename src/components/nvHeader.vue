@@ -16,18 +16,14 @@
         <router-link tag="div" :to="{name:'user', params: { id: 123 }}">个人中心</router-link>
       </el-menu-item>
       <li class='login-info'>
-        <div class='item' v-show='isLogin'>
-          <img src='../assets/logo.png'>
-        </div>
-        <div class='item' v-show='isLogin'>
+        <router-link tag="div" class='item' v-show='isLogin' :to="{name:'user', params: { id: 123 }}">
+          <img class="avatar" src='../assets/logo.png'>
+        </router-link>
+        <router-link tag="div" class='item' v-show='isLogin' :to="{name:'user', params: { id: 123 }}">
           lmh
-        </div>
-        <div class='item' v-show='!isLogin'>
-          <router-link to='/login'>登录</router-link>
-        </div>
-        <div class='item' v-show='!isLogin'>
-          <router-link to='/registe'>注册</router-link>
-        </div>
+        </router-link>
+        <router-link tag="div" class='item' v-show='!isLogin' to='/login'>登录</router-link>
+        <router-link class='item' v-show='!isLogin' to='/registe'>注册</router-link>
         <div class='item' v-show='isLogin'>
           退出
         </div>
@@ -58,6 +54,9 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang='scss' scoped>
+  :focus{
+    outline: none;
+  }
   .nv-header{
     li.logo {
       float: left;
@@ -80,7 +79,16 @@ export default {
       .item {
         float: left;
         cursor: pointer;
-        padding: 5px 20px;
+        padding: 0px 20px;
+
+        .avatar{
+          padding-top: 5px;
+          border-radius: 50%;
+        }
+      }
+
+      .item:hover{
+        color: #409EFF;
       }
     }
   }

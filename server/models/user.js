@@ -15,7 +15,10 @@ var UserSchema = new mongoose.Schema({
     ref: 'Video'
   }], // 用户上传的视频
   email: String, // 邮箱
-  phone: String, // 手机
+  phone: {
+    type: String,
+    default: ''
+  }, // 手机
   name: String, // 昵称
   avatar: {
     type: String,
@@ -40,5 +43,11 @@ UserSchema.pre('save', function (next) {
   this.passWord = Md5(this.passWord)
   next()
 })
+
+UserSchema.statics = {
+  findByUserName (userName) { // 查找用户名
+    return this.findOne({userName}).exec()
+  }
+}
 
 module.exports = mongoose.model('User', UserSchema)

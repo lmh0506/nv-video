@@ -14,7 +14,7 @@
           <el-input v-model="ruleForm.yzm" class="yzm-input"></el-input>
         </el-form-item>
         <el-form-item class="login-btn">
-          <el-button type="primary">登录</el-button>
+          <el-button type="primary" @click="login">登录</el-button>
           <el-button>          
             <router-link to="/registe">快速注册</router-link>
           </el-button>
@@ -25,58 +25,38 @@
 </template>
 
 <script>
-  import Yzm from '@/base/yzm'
-  import {_checkUserName, _checkPassWord} from '@/util/check'
+  import {baseFormMixin} from '@/mixins/baseFormMixin'
+  import {loginUser} from '@/api/User'
+  import {ERR_OK} from '@/config/index'
+  import {_checkUserName} from '@/util/check'
 
   export default {
+    mixins: [baseFormMixin],
     data () {
-      const _checkYzm = (rule, value, callback) => {
-        // 判断验证码是否为空
-        if (!value) {
-          return callback(new Error('验证码不能为空'))
-        } else if (!this.isOk) {
-          return callback(new Error('验证码错误'))
-        } else {
-          callback()
-        }
-      }
-
       return {
-        ruleForm: {
-          userName: '', // 用户名
-          passWord: '', // 密码
-          yzm: '' // 输入的验证码
-        },
         rules: {
           userName: [
-            {validator: _checkUserName, trigger: 'blur'}
-          ],
-          passWord: [
-            {validator: _checkPassWord, trigger: 'blur'}
-          ],
-          yzm: [
-            {validator: _checkYzm, trigger: 'blur'}
+            {validator: _checkUserName(false), trigger: 'blur'}
           ]
-        },
-        picText: '' // 获取的验证码
-      }
-    },
-    computed: {
-      // 校验验证码是否正确
-      isOk () {
-        return this.picText.toLowerCase() === this.ruleForm.yzm.toLowerCase()
+        }
       }
     },
     methods: {
-      // 获取验证码的值
-      draw (picText) {
-        this.$nextTick(() => {
-          this.picText = picText
+      login () {
+        this.$refs.ruleForm.validate(valid => {
+          if (valid) {
+            loginUser(this.ruleForm).then(res => {
+              if (res.data.error === ERR_OK) {
+                alert('登录成功')
+              } else if (res.data.error === 10001) {
+                alert('密码错误')
+              }
+            })
+          } else {
+            return false
+          }
         })
       }
-    },
-    components: {
-      Yzm
     }
   }
 </script>
@@ -91,18 +71,21 @@
     background-position-y: 20%;
     background-color: #ddd;
 
-    .form-title{
-      text-align: center;
-      margin-bottom: 15px;
-    }
-
     .login-form {
       width: 350px;
       padding: 10px 30px 10px 0;
       background-color: #fff;
+      border-radius: 10px;
+      box-shadow: 7px 7px 5px #bbb;
       position: absolute;
       top: 20%;
       right: 15%;
+
+      .form-title{
+        text-align: center;
+        margin-left: 30px;
+        margin-bottom: 15px;
+      }
 
       .yzm-input{
         width: 170px;
