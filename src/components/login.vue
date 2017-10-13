@@ -6,7 +6,7 @@
         <el-form-item label="用户名" prop="userName">
           <el-input v-model="ruleForm.userName"></el-input>
         </el-form-item>
-        <el-form-item label="密码" prop="passWord">
+        <el-form-item label="密码" :error='errorMsg' prop="passWord">
           <el-input type="password" v-model="ruleForm.passWord"></el-input>
         </el-form-item>
         <el-form-item prop="yzm">
@@ -38,7 +38,8 @@
           userName: [
             {validator: _checkUserName(false), trigger: 'blur'}
           ]
-        }
+        },
+        errorMsg: '' // 显示密码错误信息  用于登录时密码错误的情况
       }
     },
     methods: {
@@ -47,9 +48,10 @@
           if (valid) {
             loginUser(this.ruleForm).then(res => {
               if (res.data.error === ERR_OK) {
+                this.errorMsg = ''
                 alert('登录成功')
               } else if (res.data.error === 10001) {
-                alert('密码错误')
+                this.errorMsg = '密码错误'
               }
             })
           } else {
