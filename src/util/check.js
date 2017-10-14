@@ -1,4 +1,4 @@
-import {checkUserName} from '@/api/User'
+import {checkUserName, checkName} from '@/api/User'
 import {ERR_OK} from '@/config/index'
 
 // 校验用户名是否规范
@@ -29,4 +29,23 @@ export const _checkPassWord = (rule, value, callback) => {
   } else {
     callback()
   }
+}
+
+// 检测昵称是否规范
+export const _checkName = (rule, value, callback) => {
+  // 判断昵称是否为空
+  if (!value) {
+    return callback(new Error('请输入昵称'))
+  } else if (value.length < 3 && value.length > 8) {
+    return callback(new Error('长度在 3 到 8 个字符'))
+  }
+
+  // 查询昵称是否存在
+  checkName(value).then(res => {
+    if (res.data.error !== ERR_OK) {
+      callback(new Error('该昵称已被占用'))
+    } else {
+      callback()
+    }
+  })
 }

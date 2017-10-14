@@ -13,18 +13,18 @@
         <router-link tag="div" to='/rankList'>排行榜</router-link>
       </el-menu-item>
       <el-menu-item index='3'>
-        <router-link tag="div" :to="{name:'user', params: { id: 123 }}">个人中心</router-link>
+        <router-link tag="div" :to="personRoute">个人中心</router-link>
       </el-menu-item>
       <li class='login-info'>
-        <router-link tag="div" class='item' v-show='isLogin' :to="{name:'user', params: { id: 123 }}">
-          <img class="avatar" src='../assets/logo.png'>
+        <router-link tag="div" class='item' v-if='isLogin' :to="{name:'user', params: { id: user.id }}">
+          <img class="avatar" height="50" :src='user.avatar'>
         </router-link>
-        <router-link tag="div" class='item' v-show='isLogin' :to="{name:'user', params: { id: 123 }}">
-          lmh
+        <router-link tag="div" class='item' v-if='isLogin' :to="{name:'user', params: { id: user.id }}">
+          {{user.name}}
         </router-link>
-        <router-link tag="div" class='item' v-show='!isLogin' to='/login'>登录</router-link>
-        <router-link class='item' v-show='!isLogin' to='/registe'>注册</router-link>
-        <div class='item' v-show='isLogin'>
+        <router-link tag="div" class='item' v-if='!isLogin' to='/login'>登录</router-link>
+        <router-link class='item' v-if='!isLogin' to='/registe'>注册</router-link>
+        <div class='item' v-if='isLogin' @click="loginOut">
           退出
         </div>
       </li>
@@ -33,23 +33,62 @@
 </template>
 
 <script>
-export default {
-  data () {
-    return {
-      isLogin: false
-    }
-  },
-  computed: {
-    activeIndex () {
-      // 通过路由的名称判断当前导航位置
-      switch (this.$route.name) {
-        case 'Index': return '1'
-        case 'rankList': return '2'
-        case 'user': return '3'
+  import {mapState, mapMutations} from 'vuex'
+  import {checkLogin, loginOut} from '@/api/User'
+  import {ERR_OK} from '@/config/index'
+
+  export default {
+    // data () {
+    //   return {
+    //     isLogin: false
+    //   }
+    // },
+    computed: {
+      activeIndex () {
+        // 通过路由的名称判断当前导航位置
+        switch (this.$route.name) {
+          case 'Index': return '1'
+          case 'rankList': return '2'
+          case 'user': return '3'
+        }
+      },
+      personRoute () {
+        return this.isLogin ? {name: 'user', params: { id: this.user.id }} : '/login'
+      },
+      isLogin () {
+        if (this.user.id) {
+          return true
+        } else {
+          return false
+        }
+      },
+      ...mapState([
+        'user'
+      ])
+    },
+    methods: {
+      ...mapMutations([
+        'updateUser'
+      ]),
+      loginOut () { // 退出登录
+        loginOut().then(res => {
+          if (res.data.error === ERR_OK) {
+            this.updateUser({})
+          }
+        })
+      }
+    },
+    mounted () {
+      // 获取登录的用户信息并存储到vuex中
+      if (!this.isLogin) {
+        checkLogin().then(res => {
+          if (res.data.error === ERR_OK) {
+            this.updateUser(res.data.result)
+          }
+        })
       }
     }
   }
-}
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

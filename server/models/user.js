@@ -22,7 +22,7 @@ var UserSchema = new mongoose.Schema({
   name: String, // 昵称
   avatar: {
     type: String,
-    default: '/default.jpg'
+    default: '/images/default.jpg'
   }, // 头像
   role: {
     type: Number,
@@ -47,6 +47,9 @@ UserSchema.pre('save', function (next) {
 UserSchema.statics = {
   findByUserName (userName) { // 查找用户名
     return this.findOne({userName}).exec()
+  },
+  findByName (name) { // 查找昵称
+    return this.findOne({name}).exec()
   }
 }
 

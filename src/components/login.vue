@@ -29,6 +29,7 @@
   import {loginUser} from '@/api/User'
   import {ERR_OK} from '@/config/index'
   import {_checkUserName} from '@/util/check'
+  import {mapMutations} from 'vuex'
 
   export default {
     mixins: [baseFormMixin],
@@ -43,13 +44,17 @@
       }
     },
     methods: {
+      ...mapMutations([
+        'updateUser'
+      ]),
       login () {
         this.$refs.ruleForm.validate(valid => {
           if (valid) {
             loginUser(this.ruleForm).then(res => {
               if (res.data.error === ERR_OK) {
                 this.errorMsg = ''
-                alert('登录成功')
+                this.updateUser(res.data.result)
+                this.$router.push('/')
               } else if (res.data.error === 10001) {
                 this.errorMsg = '密码错误'
               }

@@ -32,8 +32,10 @@
 
 <script>
   import {baseFormMixin} from '@/mixins/baseFormMixin'
-  import {_checkUserName} from '@/util/check'
+  import {_checkUserName, _checkName} from '@/util/check'
   import {registeUser} from '@/api/User'
+  import {mapMutations} from 'vuex'
+  import {ERR_OK} from '@/config/index'
 
   export default {
     mixins: [baseFormMixin],
@@ -62,8 +64,7 @@
             {validator: comparePwd, trigger: 'blur'}
           ],
           name: [
-            { required: true, message: '请输入昵称', trigger: 'blur' },
-            { min: 3, max: 8, message: '长度在 3 到 8 个字符', trigger: 'blur' }
+            {validator: _checkName, trigger: 'blur'}
           ],
           email: [
             { required: true, message: '请输入邮箱地址', trigger: 'blur' },
@@ -73,11 +74,17 @@
       }
     },
     methods: {
+      ...mapMutations([
+        'updateUser'
+      ]),
       registe () {
         this.$refs.ruleForm.validate(valid => {
           if (valid) {
-            registeUser(this.ruleForm).then(() => {
-              alert('注册成功')
+            registeUser(this.ruleForm).then((res) => {
+              if (res.data.error === ERR_OK) {
+                this.updateUser(res.data.result)
+                this.$router.push('/')
+              }
             })
           } else {
             return false

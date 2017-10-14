@@ -1,5 +1,6 @@
 const router = require('koa-router')()
 const User = require('../models/user')
+const middleware = require('./middleware')
 
 router.prefix('/api/user')
 
@@ -11,17 +12,34 @@ router.post('/exist', async (ctx, next) => {
     msg: ''
   }
 
-  try {
-    let user = await User.findByUserName(userName)
+  if (userName) { // 查找用户名是否存在
+    try {
+      let user = await User.findByUserName(userName)
 
-    if (!user) {
-      // 用户不存在
-      body.error = 10001
+      if (!user) {
+        // 用户不存在
+        body.error = 10001
+      }
+    } catch (err) {
+      console.log(err)
+      body.error = 1
     }
-  } catch (err) {
-    console.log(err)
-    body.error = 1
+  } else { // 查找昵称是否存在
+    let {name} = ctx.request.body
+
+    try {
+      let user = await User.findByName(name)
+
+      if (user) {
+        // 昵称存在
+        body.error = 10001
+      }
+    } catch (err) {
+      console.log(err)
+      body.error = 1
+    }
   }
+
   ctx.body = body
 })
 
@@ -37,6 +55,11 @@ router.post('/registe', async (ctx, next) => {
     // 存储用户信息
     user = new User(user)
     await user.save()
+
+    // 注册成功时 存储用户的session信息
+    let {name, avatar, id} = user
+    ctx.session.user = {name, avatar, id}
+    body.result = {name, avatar, id}
   } catch (err) {
     console.log(err)
     body.error = 1
@@ -58,6 +81,11 @@ router.post('/login', async (ctx, next) => {
     if (!user.comparePassword(passWord)) {
       // 密码错误
       body.error = 10001
+    } else {
+      // 登录成功时 存储用户的session信息
+      let {name, avatar, id} = user
+      ctx.session.user = {name, avatar, id}
+      body.result = {name, avatar, id}
     }
   } catch (err) {
     console.log(err)
@@ -66,8 +94,32 @@ router.post('/login', async (ctx, next) => {
   ctx.body = body
 })
 
-router.get('/bar', function (ctx, next) {
-  ctx.body = 'this is a users/bar response'
+// 检测用户是否登录
+router.get('/checkLogin', async (ctx, next) => {
+  let user = ctx.session.user
+  if (user) {
+    ctx.body = {
+      error: 0,
+      result: user
+    }
+  } else {
+    ctx.body = {
+      error: 10002,
+      msg: '未登录'
+    }
+  }
 })
+
+// 用户退出登录
+router.get('/loginOut', async (ctx, next) => {
+  // 清除session
+  ctx.session.user = null
+  ctx.body = {
+    error: 0,
+    msg: '退出成功'
+  }
+})
+
+router.use(middleware.loginIntercept)
 
 module.exports = router

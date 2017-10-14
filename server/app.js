@@ -6,6 +6,8 @@ const onerror = require('koa-onerror')
 const bodyparser = require('koa-bodyparser')
 const logger = require('koa-logger')
 
+const session = require('koa-session')
+
 require('./models/connect')
 
 // error handler
@@ -19,8 +21,11 @@ app.use(json())
 app.use(logger())
 app.use(require('koa-static')(__dirname + '/public'))
 
+app.keys = ['some secret hurr'];
+app.use(session(app))
+
 app.use(views(__dirname + '/views', {
-  extension: 'ejs'
+  extension: 'html'
 }))
 
 // logger
