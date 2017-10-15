@@ -1,6 +1,6 @@
 <template>
-  <div class='nv-footer'>
-    © 2018 by 林明惠
+  <div>
+    videoAdmin
   </div>
 </template>
 
@@ -15,11 +15,5 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang='scss' scoped>
-  .nv-footer{
-    height: 100px;
-    line-height: 100px;
-    text-align: center;
-    color: #000;
-    border-top: 1px solid #e6e6e6;
-  }
+
 </style>

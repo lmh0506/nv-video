@@ -72,7 +72,7 @@
 <style lang='scss' scoped>
   .login-wrapper{
     width: 100%;
-    min-height: calc(100% - 161px); 
+    min-height: calc(100% - 162px); 
     background: url('../assets/login.jpg') no-repeat center;
     background-size: 100% auto;
     background-position-y: 20%;

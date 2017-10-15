@@ -38,11 +38,6 @@
   import {ERR_OK} from '@/config/index'
 
   export default {
-    // data () {
-    //   return {
-    //     isLogin: false
-    //   }
-    // },
     computed: {
       activeIndex () {
         // 通过路由的名称判断当前导航位置

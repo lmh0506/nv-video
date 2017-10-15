@@ -25,3 +25,11 @@ export const checkLogin = () => {
 export const loginOut = () => {
   return axios.get('/api/user/loginOut')
 }
+
+export const getUserList = (params, page, pageSize) => {
+  return axios.get('/api/user/getList', {params: {params, page, pageSize}})
+}
+
+export const deleteUser = (id) => {
+  return axios.post('/api/user/delete', {id})
+}

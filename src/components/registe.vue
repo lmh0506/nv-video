@@ -99,7 +99,7 @@
 <style lang='scss' scoped>
   .registe-wrapper{
     width: 100%;
-    min-height: calc(100% - 161px); 
+    min-height: calc(100% - 162px); 
     background: url('../assets/register.jpg') no-repeat center;
     background-size: 100% auto;
     background-position-y: 100%;

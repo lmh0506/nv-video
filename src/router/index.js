@@ -5,6 +5,10 @@ import rankList from '@/components/rankList'
 import user from '@/components/user'
 import login from '@/components/login'
 import registe from '@/components/registe'
+import admin from '@/components/admin'
+import userList from '@/components/userList'
+import videoAdmin from '@/components/videoAdmin'
+import adminIndex from '@/components/adminIndex'
 
 Vue.use(Router)
 
@@ -35,6 +39,27 @@ export default new Router({
       path: '/registe',
       name: 'registe',
       component: registe
+    },
+    {
+      path: '/admin',
+      component: admin,
+      children: [
+        {
+          path: '/',
+          name: 'adminIndex',
+          component: adminIndex
+        },
+        {
+          path: 'userList',
+          name: 'userList',
+          component: userList
+        },
+        {
+          path: 'videoAdmin',
+          name: 'videoAdmin',
+          component: videoAdmin
+        }
+      ]
     }
   ]
 })

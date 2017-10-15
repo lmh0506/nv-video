@@ -50,6 +50,17 @@ UserSchema.statics = {
   },
   findByName (name) { // 查找昵称
     return this.findOne({name}).exec()
+  },
+  deleteById (id) {
+    return this.remove({'_id': id}).exec()
+  },
+  findAll (params, page, pageSize) {
+    const skip = (page - 1) * pageSize
+
+    return this.find(params)
+      .skip(skip)
+      .limit(pageSize)
+      .exec()
   }
 }
 

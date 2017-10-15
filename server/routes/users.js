@@ -122,4 +122,53 @@ router.get('/loginOut', async (ctx, next) => {
 
 router.use(middleware.loginIntercept)
 
+// 获取用户列表数据
+router.get('/getList', async (ctx, next) => {
+  let body = {
+    error: 0,
+    msg: ''
+  }
+
+  let {pageSize, page, params} = ctx.request.query
+
+  page = page * 1
+  pageSize = pageSize * 1
+
+  try {
+    // 获取分页数据
+    let users = await User.findAll(params, page, pageSize)
+    let list = []
+    // 获取总数
+    let total = await User.count({}).exec()
+    users.forEach(item => {
+      let {id, userName, email, name, phone} = item
+      list.push({id, userName, email, name, phone})
+    })
+    body.result = list
+    body.total = total
+  } catch (err) {
+    body.error = 1
+    console.log(err)
+  }
+
+  ctx.body = body
+})
+
+// 删除用户
+router.post('/delete', async (ctx, next) => {
+  let id = ctx.request.body.id
+  let body = {
+    error: 0,
+    msg: ''
+  }
+  try {
+    await User.deleteById(id)
+  } catch (err) {
+    body.error = 1
+    console.log(err)
+  }
+
+  ctx.body = body
+})
+
 module.exports = router
