@@ -83,7 +83,7 @@
             registeUser(this.ruleForm).then((res) => {
               if (res.data.error === ERR_OK) {
                 this.updateUser(res.data.result)
-                this.$router.push('/')
+                this.$router.back()
               }
             })
           } else {

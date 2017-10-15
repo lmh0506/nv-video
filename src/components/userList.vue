@@ -16,6 +16,7 @@
     :data="userList"
     style="width: 100%"
     :default-sort = "{prop: 'id', order: 'descending'}"
+    class="userList-table"
     >
       <el-table-column
         prop="userName"
@@ -65,7 +66,7 @@
 
 <script>
   import {getUserList, deleteUser} from '@/api/User'
-  import {ERR_OK} from '@/config/index'
+  import {ERR_OK, NO_LOGIN} from '@/config/index'
 
   export default {
     data () {
@@ -84,6 +85,8 @@
           if (res.data.error === ERR_OK) {
             this.userList = this.normalizeList(res.data.result)
             this.total = res.data.total
+          } else if (res.data.error === NO_LOGIN) {
+            this.$router.push('/login')
           }
         })
       },
@@ -108,6 +111,8 @@
                 type: 'success',
                 message: '删除成功!'
               })
+            } else if (res.data.error === NO_LOGIN) {
+              this.$router.push('/login')
             }
           })
         }).catch(() => {
@@ -139,9 +144,14 @@
   .demo-form-inline{
     margin-top: 15px;
   }
-  
+  .userList-table{
+    margin-bottom: 20px;
+  }
   .block {
-
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translate(-50%, 0);
     .el-pagination{
       text-align: center;
     }

@@ -54,7 +54,7 @@
               if (res.data.error === ERR_OK) {
                 this.errorMsg = ''
                 this.updateUser(res.data.result)
-                this.$router.push('/')
+                this.$router.back()
               } else if (res.data.error === 10001) {
                 this.errorMsg = '密码错误'
               }

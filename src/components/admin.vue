@@ -63,6 +63,7 @@
 <style lang='scss' scoped>
   .admin-wrapper {
     min-height: calc(100% - 162px);
+    position: relative;
     .admin-aside{
       padding-top: 30px;
       background-color: #545c64;

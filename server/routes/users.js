@@ -133,13 +133,14 @@ router.get('/getList', async (ctx, next) => {
 
   page = page * 1
   pageSize = pageSize * 1
+  params = JSON.parse(params)
 
   try {
     // 获取分页数据
     let users = await User.findAll(params, page, pageSize)
     let list = []
     // 获取总数
-    let total = await User.count({}).exec()
+    let total = await User.count(params).exec()
     users.forEach(item => {
       let {id, userName, email, name, phone} = item
       list.push({id, userName, email, name, phone})
