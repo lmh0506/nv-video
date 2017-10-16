@@ -6,40 +6,32 @@ router.prefix('/api/user')
 
 // 检测用户是否存在
 router.post('/exist', async (ctx, next) => {
-  let {userName} = ctx.request.body
+  let {userName, name, email, phone} = ctx.request.body
   let body = {
     error: 0,
     msg: ''
   }
 
-  if (userName) { // 查找用户名是否存在
-    try {
-      let user = await User.findByUserName(userName)
-
-      if (!user) {
-        // 用户不存在
-        body.error = 10001
-      }
-    } catch (err) {
-      console.log(err)
-      body.error = 1
+  try {
+    var user
+    if (userName) { // 查找用户名是否存在
+      user = await User.findByUserName(userName)
+    } else if (name) { // 查找昵称是否存在
+      user = await User.findByName(name)
+    } else if (email) { // 查找邮箱是否存在
+      user = await User.findByEmail(email)
+    } else if (phone) { // 查找手机号码是否存在
+      user = await User.findByPhone(phone)
     }
-  } else { // 查找昵称是否存在
-    let {name} = ctx.request.body
 
-    try {
-      let user = await User.findByName(name)
-
-      if (user) {
-        // 昵称存在
-        body.error = 10001
-      }
-    } catch (err) {
-      console.log(err)
-      body.error = 1
+    if (user) {
+      // 已存在
+      body.error = 10001
     }
+  } catch (err) {
+    console.log(err)
+    body.error = 1
   }
-
   ctx.body = body
 })
 
@@ -129,18 +121,17 @@ router.get('/getList', async (ctx, next) => {
     msg: ''
   }
 
-  let {pageSize, page, params} = ctx.request.query
+  let {pageSize, page, searchKey} = ctx.request.query
 
   page = page * 1
   pageSize = pageSize * 1
-  params = JSON.parse(params)
 
   try {
     // 获取分页数据
-    let users = await User.findAll(params, page, pageSize)
+    let users = await User.findAll(page, pageSize, searchKey)
     let list = []
     // 获取总数
-    let total = await User.count(params).exec()
+    let total = await User.getTotal(searchKey)
     users.forEach(item => {
       let {id, userName, email, name, phone} = item
       list.push({id, userName, email, name, phone})
@@ -164,6 +155,23 @@ router.post('/delete', async (ctx, next) => {
   }
   try {
     await User.deleteById(id)
+  } catch (err) {
+    body.error = 1
+    console.log(err)
+  }
+
+  ctx.body = body
+})
+
+// 更新用户
+router.post('/update', async (ctx, next) => {
+  let {userForm} = ctx.request.body
+  let body = {
+    error: 0,
+    msg: ''
+  }
+  try {
+    await User.updateUser(userForm)
   } catch (err) {
     body.error = 1
     console.log(err)

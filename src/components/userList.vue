@@ -6,16 +6,17 @@
     </el-breadcrumb>
     <el-form :inline="true" class="demo-form-inline">
       <el-form-item>
-        <el-input v-model="userName" placeholder="查找用户名"></el-input>
+        <el-input v-model="searchKey" placeholder="查找用户名"></el-input>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="search">查询</el-button>
       </el-form-item>
     </el-form>
     <el-table
+    v-loading='loading'
+    element-loading-text="拼命加载中"
     :data="userList"
     style="width: 100%"
-    :default-sort = "{prop: 'id', order: 'descending'}"
     class="userList-table"
     >
       <el-table-column
@@ -45,6 +46,28 @@
           <el-button
             size="small"
             @click="handleEdit(scope.$index, scope.row.id)">编辑</el-button>
+          
+          <el-dialog title="修改用户信息" :visible.sync="editUser">
+            <el-form :label-width="formLabelWidth" :model="userForm" status-icon :rules='rules'>
+              <el-form-item label="用户名" prop='userName'>
+                <el-input v-model="userForm.userName" auto-complete="off"></el-input>
+              </el-form-item>
+              <el-form-item label="昵称" prop='name'>
+                <el-input v-model="userForm.name" auto-complete="off"></el-input>
+              </el-form-item>
+              <el-form-item label="邮箱地址" prop='email'>
+                <el-input v-model="userForm.email" auto-complete="off"></el-input>
+              </el-form-item>
+              <el-form-item label="手机号码" prop='phone'>
+                <el-input v-model="userForm.phone" auto-complete="off"></el-input>
+              </el-form-item>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+              <el-button @click="editUser = false">取 消</el-button>
+              <el-button type="primary" @click="update()">确 定</el-button>
+            </div>
+          </el-dialog>
+
           <el-button
             size="small"
             type="danger"
@@ -65,26 +88,51 @@
 </template>
 
 <script>
-  import {getUserList, deleteUser} from '@/api/User'
+  import {getUserList, deleteUser, updateUser} from '@/api/User'
   import {ERR_OK, NO_LOGIN} from '@/config/index'
+  import {_checkUserName, _checkName, _checkEmail, _checkPhone} from '@/util/check'
 
   export default {
     data () {
       return {
-        userList: [],
-        pageSize: 10,
-        total: 0,
-        currentPage: 1,
-        searchKey: {},
-        userName: ''
+        userList: [], // 用户列表数据
+        pageSize: 10, // 每页显示数目
+        total: 0, // 总数
+        currentPage: 1, // 当前页码
+        searchKey: '', // 查询的关键字
+        loading: false, // 是否显示loading
+        editUser: false, // 是否显示编辑用户的模态框
+        formLabelWidth: '80px', // label标签宽度
+        userForm: {
+          userName: '',
+          name: '',
+          email: '',
+          phone: ''
+        }, // 用户表单
+        rules: {
+          userName: [
+            {validator: _checkUserName(true), trigger: 'blur'}
+          ],
+          name: [
+            {validator: _checkName, trigger: 'blur'}
+          ],
+          email: [
+            {validator: _checkEmail, trigger: 'blur'}
+          ],
+          phone: [
+            {validator: _checkPhone, trigger: 'blur'}
+          ]
+        }
       }
     },
     methods: {
       getUserList () {
+        this.loading = true
         getUserList(this.searchKey, this.currentPage, this.pageSize).then(res => { // 获取用户列表
           if (res.data.error === ERR_OK) {
             this.userList = this.normalizeList(res.data.result)
             this.total = res.data.total
+            this.loading = false
           } else if (res.data.error === NO_LOGIN) {
             this.$router.push('/login')
           }
@@ -122,13 +170,30 @@
           })
         })
       },
-      handleCurrentChange (page) {
+      handleEdit (index, id) {
+        let user = this.userList[index]
+        this.userForm = user
+        this.editUser = true
+      },
+      handleCurrentChange (page) { // 跳转页码
         this.currentPage = page
         this.getUserList()
       },
-      search () {
-        this.searchKey = {userName: this.userName}
+      search () { // 搜索
         this.getUserList()
+      },
+      update () {
+        updateUser(this.userForm).then(res => {
+          if (res.data.error === ERR_OK) {
+            this.editUser = false
+            this.$message({
+              type: 'success',
+              message: '修改成功!'
+            })
+          } else if (res.data.error === NO_LOGIN) {
+            this.$router.push('/login')
+          }
+        })
       }
     },
     mounted () {

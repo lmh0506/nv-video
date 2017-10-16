@@ -8,6 +8,14 @@ export const checkName = name => {
   return axios.post('/api/user/exist', {name})
 }
 
+export const checkEmail = email => {
+  return axios.post('/api/user/exist', {email})
+}
+
+export const checkPhone = phone => {
+  return axios.post('/api/user/exist', {phone})
+}
+
 export const registeUser = form => {
   let {userName, passWord, email, name} = form
   return axios.post('/api/user/registe', {userName, passWord, email, name})
@@ -26,10 +34,14 @@ export const loginOut = () => {
   return axios.get('/api/user/loginOut')
 }
 
-export const getUserList = (params, page, pageSize) => {
-  return axios.get('/api/user/getList', {params: {params, page, pageSize}})
+export const getUserList = (searchKey, page, pageSize) => {
+  return axios.get('/api/user/getList', {params: {searchKey, page, pageSize}})
 }
 
 export const deleteUser = (id) => {
   return axios.post('/api/user/delete', {id})
+}
+
+export const updateUser = (userForm) => {
+  return axios.post('/api/user/update', {userForm})
 }

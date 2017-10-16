@@ -51,16 +51,42 @@ UserSchema.statics = {
   findByName (name) { // 查找昵称
     return this.findOne({name}).exec()
   },
+  findByEmail (email) { // 查找邮箱
+    return this.findOne({email}).exec()
+  },
+  findByPhone (phone) { // 查找手机号码
+    return this.findOne({phone}).exec()
+  },
   deleteById (id) {
     return this.remove({'_id': id}).exec()
   },
-  findAll (params, page, pageSize) {
+  updateUser (user) {
+    let {userName, phone, name, email} = user
+    return this.update({'_id': user.id}, {userName, phone, name, email}).exec()
+  },
+  findAll (page, pageSize, searchKey) {
     const skip = (page - 1) * pageSize
+    let params = selectKey(searchKey)
 
     return this.find(params)
       .skip(skip)
       .limit(pageSize)
+      .sort({'_id': 1})
       .exec()
+  },
+  getTotal (searchKey) {
+    let params = selectKey(searchKey)
+    return this.count(params).exec()
+  }
+}
+
+function selectKey (searchKey) {
+  if (searchKey) {
+    // 利用正则来进行模糊查询
+    searchKey = new RegExp(searchKey)
+    return {$or: [{'userName': searchKey}, {'name': searchKey}, {'email': searchKey}, {'phone': searchKey}]}
+  } else {
+    return {}
   }
 }
 

@@ -1,4 +1,4 @@
-import {checkUserName, checkName} from '@/api/User'
+import {checkUserName, checkName, checkEmail, checkPhone} from '@/api/User'
 import {ERR_OK} from '@/config/index'
 
 // 校验用户名是否规范
@@ -12,7 +12,7 @@ export const _checkUserName = flag => {
     // 查询用户名是否存在
     checkUserName(value).then(res => {
       // 通过flag标识来判断是在登录表单还是注册表单进行的校验 避免出现的提示信息错误
-      if (res.data.error === (flag ? ERR_OK : 10001)) {
+      if (res.data.error === (flag ? 10001 : ERR_OK)) {
         callback(new Error(flag ? '用户名已存在' : '用户名不存在'))
       } else {
         callback()
@@ -44,6 +44,40 @@ export const _checkName = (rule, value, callback) => {
   checkName(value).then(res => {
     if (res.data.error !== ERR_OK) {
       callback(new Error('该昵称已被占用'))
+    } else {
+      callback()
+    }
+  })
+}
+
+// 检测邮箱是否规范
+export const _checkEmail = (rule, value, callback) => {
+  if (!value) {
+    return callback(new Error('请输入邮箱地址'))
+  } else if (!/\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*/.test(value)) {
+    return callback(new Error('请输入正确的邮箱地址'))
+  }
+
+  checkEmail(value).then(res => {
+    if (res.data.error !== ERR_OK) {
+      callback(new Error('该邮箱已被占用'))
+    } else {
+      callback()
+    }
+  })
+}
+
+// 检测手机号码是否规范
+export const _checkPhone = (rule, value, callback) => {
+  if (!value) {
+    return callback(new Error('请输入手机号码'))
+  } else if (!/^((1[3,5,8][0-9])|(14[5,7])|(17[0,6,7,8])|(19[7]))\d{8}$/.test(value)) {
+    return callback(new Error('请输入正确的手机号码'))
+  }
+
+  checkPhone(value).then(res => {
+    if (res.data.error !== ERR_OK) {
+      callback(new Error('该手机号码已被注册'))
     } else {
       callback()
     }

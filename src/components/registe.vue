@@ -32,7 +32,7 @@
 
 <script>
   import {baseFormMixin} from '@/mixins/baseFormMixin'
-  import {_checkUserName, _checkName} from '@/util/check'
+  import {_checkUserName, _checkName, _checkEmail} from '@/util/check'
   import {registeUser} from '@/api/User'
   import {mapMutations} from 'vuex'
   import {ERR_OK} from '@/config/index'
@@ -67,8 +67,7 @@
             {validator: _checkName, trigger: 'blur'}
           ],
           email: [
-            { required: true, message: '请输入邮箱地址', trigger: 'blur' },
-            { type: 'email', message: '请输入正确的邮箱地址', trigger: 'blur,change' }
+            {validator: _checkEmail, trigger: 'blur'}
           ]
         }
       }
