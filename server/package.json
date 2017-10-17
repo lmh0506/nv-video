@@ -25,6 +25,8 @@
     "koa-session": "^5.5.0",
     "md5": "^2.2.1",
     "mongoose": "^4.12.1",
+    "nodemailer": "^4.2.0",
+    "nodemailer-smtp-transport": "^2.7.4",
     "nodemon": "^1.8.1"
   }
 }

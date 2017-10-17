@@ -67,7 +67,7 @@
             {validator: _checkName, trigger: 'blur'}
           ],
           email: [
-            {validator: _checkEmail, trigger: 'blur'}
+            {validator: _checkEmail(true), trigger: 'blur'}
           ]
         }
       }

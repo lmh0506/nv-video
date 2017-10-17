@@ -45,3 +45,15 @@ export const deleteUser = (id) => {
 export const updateUser = (userForm) => {
   return axios.post('/api/user/update', {userForm})
 }
+
+export const sendEmail = email => {
+  return axios.post('/api/user/sendEmail', {email})
+}
+
+export const checkEmailYzm = form => {
+  return axios.post('/api/user/checkEmailYzm', form)
+}
+
+export const setNewPwd = (email, passWord) => {
+  return axios.post('/api/user/setNewPwd', {email, passWord})
+}

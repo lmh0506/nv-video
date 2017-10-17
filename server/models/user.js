@@ -77,6 +77,9 @@ UserSchema.statics = {
   getTotal (searchKey) {
     let params = selectKey(searchKey)
     return this.count(params).exec()
+  },
+  updatePwd (email, passWord) {
+    return this.update({email}, {'passWord': Md5(passWord)}).exec()
   }
 }
 

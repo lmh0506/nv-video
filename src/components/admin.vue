@@ -7,8 +7,6 @@
             <el-menu
               :default-active="activeRoute"
               class="el-menu-vertical-demo"
-              @open="handleOpen"
-              @close="handleClose"
               background-color="#545c64"
               text-color="#fff"
               active-text-color="#ffd04b"
@@ -21,10 +19,15 @@
                 <i class="el-icon-menu"></i>
                 <span slot="title">用户列表</span>
               </el-menu-item>
-              <el-menu-item index="/admin/videoAdmin">
-                <i class="el-icon-setting"></i>
-                <span slot="title">视频管理</span>
-              </el-menu-item>
+              <el-submenu index=''>
+                <template slot="title">
+                  <i class="el-icon-setting"></i>
+                  <span>视频管理</span>
+                </template>
+                <el-menu-item-group>
+                  <el-menu-item index="/admin/videoType">类型管理</el-menu-item>
+                </el-menu-item-group>
+              </el-submenu>
             </el-menu>
           </div>
         </el-col>
@@ -46,14 +49,6 @@
     computed: {
       activeRoute () {
         return this.$route.path
-      }
-    },
-    methods: {
-      handleOpen (key, keyPath) {
-        console.log(key, keyPath)
-      },
-      handleClose (key, keyPath) {
-        console.log(key, keyPath)
       }
     }
   }

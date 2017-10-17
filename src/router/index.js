@@ -7,8 +7,9 @@ import login from '@/components/login'
 import registe from '@/components/registe'
 import admin from '@/components/admin'
 import userList from '@/components/userList'
-import videoAdmin from '@/components/videoAdmin'
+import videoType from '@/components/videoType'
 import adminIndex from '@/components/adminIndex'
+import forgetPwd from '@/components/forgetPwd'
 
 Vue.use(Router)
 
@@ -41,6 +42,11 @@ export default new Router({
       component: registe
     },
     {
+      path: '/forgetPwd',
+      name: 'forgetPwd',
+      component: forgetPwd
+    },
+    {
       path: '/admin',
       component: admin,
       children: [
@@ -55,9 +61,9 @@ export default new Router({
           component: userList
         },
         {
-          path: 'videoAdmin',
-          name: 'videoAdmin',
-          component: videoAdmin
+          path: 'videoType',
+          name: 'videoType',
+          component: videoType
         }
       ]
     }

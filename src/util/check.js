@@ -1,4 +1,5 @@
 import {checkUserName, checkName, checkEmail, checkPhone} from '@/api/User'
+import {checkTypeName} from '@/api/VideoType'
 import {ERR_OK} from '@/config/index'
 
 // 校验用户名是否规范
@@ -51,20 +52,22 @@ export const _checkName = (rule, value, callback) => {
 }
 
 // 检测邮箱是否规范
-export const _checkEmail = (rule, value, callback) => {
-  if (!value) {
-    return callback(new Error('请输入邮箱地址'))
-  } else if (!/\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*/.test(value)) {
-    return callback(new Error('请输入正确的邮箱地址'))
-  }
-
-  checkEmail(value).then(res => {
-    if (res.data.error !== ERR_OK) {
-      callback(new Error('该邮箱已被占用'))
-    } else {
-      callback()
+export const _checkEmail = flag => {
+  return (rule, value, callback) => {
+    if (!value) {
+      return callback(new Error('请输入邮箱地址'))
+    } else if (!/\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*/.test(value)) {
+      return callback(new Error('请输入正确的邮箱地址'))
     }
-  })
+
+    checkEmail(value).then(res => {
+      if (res.data.error === (flag ? 10001 : ERR_OK)) {
+        callback(new Error(flag ? '该邮箱已被注册' : '该邮箱不存在'))
+      } else {
+        callback()
+      }
+    })
+  }
 }
 
 // 检测手机号码是否规范
@@ -78,6 +81,25 @@ export const _checkPhone = (rule, value, callback) => {
   checkPhone(value).then(res => {
     if (res.data.error !== ERR_OK) {
       callback(new Error('该手机号码已被注册'))
+    } else {
+      callback()
+    }
+  })
+}
+
+// 检测分类名称是否规范
+export const _checkTypeName = (rule, value, callback) => {
+  // 判断分类名称是否为空
+  if (!value) {
+    return callback(new Error('请输入分类名称'))
+  } else if (value.length > 5) {
+    return callback(new Error('名称长度要小于5个字符'))
+  }
+
+  // 查询分类名称是否存在
+  checkTypeName(value).then(res => {
+    if (res.data.error !== ERR_OK) {
+      callback(new Error('该分类名称已存在'))
     } else {
       callback()
     }

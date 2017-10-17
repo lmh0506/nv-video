@@ -14,11 +14,12 @@
           <el-input v-model="ruleForm.yzm" class="yzm-input"></el-input>
         </el-form-item>
         <el-form-item class="login-btn">
-          <el-button type="primary" @click="login">登录</el-button>
-          <el-button>          
+          <el-button type="primary" style="padding:12px 32px" @click="login">登录</el-button>
+          <el-button style="margin-left:75px;">          
             <router-link to="/registe">快速注册</router-link>
           </el-button>
         </el-form-item>
+        <p class="forgetPwd"><router-link to="/forgetPwd">忘记密码?</router-link></p>
       </el-form>
     </div>
   </div>
@@ -103,6 +104,14 @@
       .login-btn{
         margin-left: 0;
         text-align: center;
+      }
+
+      .forgetPwd {
+        text-align: right;
+        font-size: 14px;
+        a {
+          color: #409EFF;
+        }
       }
     }
   }

@@ -47,7 +47,7 @@
             size="small"
             @click="handleEdit(scope.$index, scope.row.id)">编辑</el-button>
           
-          <el-dialog title="修改用户信息" :visible.sync="editUser">
+          <el-dialog title="修改用户信息" width='400px' :visible.sync="editUser">
             <el-form :label-width="formLabelWidth" :model="userForm" status-icon :rules='rules'>
               <el-form-item label="用户名" prop='userName'>
                 <el-input v-model="userForm.userName" auto-complete="off"></el-input>
@@ -117,7 +117,7 @@
             {validator: _checkName, trigger: 'blur'}
           ],
           email: [
-            {validator: _checkEmail, trigger: 'blur'}
+            {validator: _checkEmail(true), trigger: 'blur'}
           ],
           phone: [
             {validator: _checkPhone, trigger: 'blur'}

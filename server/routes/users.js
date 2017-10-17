@@ -1,6 +1,10 @@
 const router = require('koa-router')()
 const User = require('../models/user')
 const middleware = require('./middleware')
+const sendEmail = require('../util/mail')
+
+var emailMap = new Map()
+const YZM_LEN = 6
 
 router.prefix('/api/user')
 
@@ -112,6 +116,68 @@ router.get('/loginOut', async (ctx, next) => {
   }
 })
 
+// 发送验证邮箱
+router.post('/sendEmail', async (ctx, next) => {
+  // 获取发送目标的邮箱地址
+  let email = ctx.request.body.email
+  let _str = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+  let _strLen = _str.length
+  let yzm = ''
+  // 生成验证码
+  for (let i = 0; i < YZM_LEN; i++) {
+    yzm += _str[randomNum(0, _strLen)]
+  }
+  let body = {
+    error: 0,
+    msg: ''
+  }
+  try {
+    await sendEmail(email, '找回密码验证码', `您的验证码是${yzm}`)
+    emailMap.set(email, yzm)
+  } catch (err) {
+    body.error = 1
+    console.log(err)
+  }
+
+  ctx.body = body
+})
+
+// 检查邮箱验证码是否正确
+router.post('/checkEmailYzm', async (ctx, next) => {
+  let {yzm, email} = ctx.request.body
+  let body = {
+    error: 0,
+    msg: ''
+  }
+
+  let emailYzm = emailMap.get(email)
+  if (emailYzm !== yzm) {
+    body.error = 1
+  } else {
+    emailMap.delete(email)
+  }
+
+  ctx.body = body
+})
+
+// 设置新密码
+router.post('/setNewPwd', async (ctx, next) => {
+  let {passWord, email} = ctx.request.body
+  let body = {
+    error: 0,
+    msg: ''
+  }
+
+  try {
+    await User.updatePwd(email, passWord)
+  } catch (err) {
+    body.error = 1
+    console.log(err)
+  }
+
+  ctx.body = body
+})
+
 router.use(middleware.loginIntercept)
 
 // 获取用户列表数据
@@ -181,3 +247,7 @@ router.post('/update', async (ctx, next) => {
 })
 
 module.exports = router
+
+function randomNum (min, max) {
+  return Math.floor(Math.random() * (max - min) + min)
+}
