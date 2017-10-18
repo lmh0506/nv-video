@@ -56,13 +56,15 @@
     },
     methods: {
       getUser () { // 获取用户数据
-        getUser(this.user.id).then(res => {
-          if (res.data.error === ERR_OK) {
-            this.userForm = res.data.result
-          } else if (res.data.error === NO_LOGIN) {
-            this.$router.push('/login')
-          }
-        })
+        if (this.user.id) {
+          getUser(this.user.id).then(res => {
+            if (res.data.error === ERR_OK) {
+              this.userForm = res.data.result
+            } else if (res.data.error === NO_LOGIN) {
+              this.$router.push('/login')
+            }
+          })
+        }
       },
       save () { // 保存用户信息
         saveUser(this.user.id, this.userForm).then(res => {
@@ -79,6 +81,11 @@
     },
     mounted () {
       this.getUser()
+    },
+    watch: {
+      user () { // user的值更新后再 进行获取用户信息  避免直接刷新获取不到值
+        this.getUser()
+      }
     }
   }
 </script>

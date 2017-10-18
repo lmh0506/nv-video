@@ -9,7 +9,7 @@
       </div>
     </div>
     <el-menu :default-active="activeRoute" class="el-menu-demo" mode="horizontal" :router = "router" >
-      <el-menu-item :index="routerIndex(0)" >主页</el-menu-item>
+      <el-menu-item :index="routerIndex(0)">主页</el-menu-item>
       <el-menu-item :index="routerIndex(1)">视频</el-menu-item>
       <el-menu-item :index="routerIndex(2)">收藏夹</el-menu-item>
       <el-menu-item :index="routerIndex(3)">设置</el-menu-item>

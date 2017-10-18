@@ -18,6 +18,8 @@
     </el-form>
     <el-table
     :data="typeList"
+    v-loading='loading'
+    element-loading-text="拼命加载中"
     style="width: 360px;">
       <el-table-column
         label="类型名"
@@ -90,14 +92,17 @@
           name: [
             {validator: _checkTypeName, trigger: 'blur'}
           ]
-        }
+        },
+        loading: false
       }
     },
     methods: {
       getTypeList () { // 获取分类列表
+        this.loading = true
         getTypeList(this.searchKey).then(res => {
           if (res.data.error === ERR_OK) {
             this.typeList = res.data.result
+            this.loading = false
           }
         })
       },
