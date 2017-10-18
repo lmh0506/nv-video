@@ -99,7 +99,7 @@
   .registe-wrapper{
     width: 100%;
     min-height: calc(100% - 162px); 
-    background: url('../assets/register.jpg') no-repeat center;
+    background: url('../../assets/register.jpg') no-repeat center;
     background-size: 100% auto;
     background-position-y: 100%;
     background-color: #f8f7f5;

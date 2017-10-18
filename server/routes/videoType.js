@@ -59,10 +59,53 @@ router.post('/add', async (ctx, next) => {
 
   try {
     let type = new VideoType({name})
-    await type.save()
+    type = await type.save()
+    body.result = type
   } catch (err) {
     body.error = 1
     console.log(err)
+  }
+
+  ctx.body = body
+})
+
+// 删除分类
+router.post('/delete', async (ctx, next) => {
+  let {id} = ctx.request.body
+  let body = {
+    error: 0,
+    msg: ''
+  }
+
+  try {
+    // 查询删除的类型
+    // let type = await VideoType.findById(id).exec()
+    // 删除该类型下的所有视频
+    // 。。。。
+
+    // 删除类型
+    await VideoType.deleteById(id)
+  } catch (err) {
+    console.log(err)
+    body.error = 1
+  }
+
+  ctx.body = body
+})
+
+// 更新分类名称
+router.post('/update', async (ctx, next) => {
+  let {id, name} = ctx.request.body
+  let body = {
+    error: 0,
+    msg: ''
+  }
+
+  try {
+    await VideoType.updateById(id, name)
+  } catch (err) {
+    console.log(err)
+    body.error = 1
   }
 
   ctx.body = body

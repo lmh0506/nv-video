@@ -16,10 +16,10 @@
         <router-link tag="div" :to="personRoute">个人中心</router-link>
       </el-menu-item>
       <li class='login-info'>
-        <router-link tag="div" class='item' v-if='isLogin' :to="{name:'user', params: { id: user.id }}">
+        <router-link tag="div" class='item' v-if='isLogin' :to="{name:'userIndex', params: { id: user.id }}">
           <img class="avatar" height="50" :src='user.avatar'>
         </router-link>
-        <router-link tag="div" class='item' v-if='isLogin' :to="{name:'user', params: { id: user.id }}">
+        <router-link tag="div" class='item' v-if='isLogin' :to="{name:'userIndex', params: { id: user.id }}">
           {{user.name}}
         </router-link>
         <router-link tag="div" class='item' v-if='!isLogin' to='/login'>登录</router-link>
@@ -48,7 +48,7 @@
         }
       },
       personRoute () {
-        return this.isLogin ? {name: 'user', params: { id: this.user.id }} : '/login'
+        return this.isLogin ? {name: 'userIndex', params: { id: this.user.id }} : '/login'
       },
       isLogin () {
         if (this.user.id) {

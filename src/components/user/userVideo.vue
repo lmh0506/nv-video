@@ -1,6 +1,6 @@
 <template>
   <div>
-    user
+    userVideo
   </div>
 </template>
 

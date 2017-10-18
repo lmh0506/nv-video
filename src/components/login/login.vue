@@ -74,7 +74,7 @@
   .login-wrapper{
     width: 100%;
     min-height: calc(100% - 162px); 
-    background: url('../assets/login.jpg') no-repeat center;
+    background: url('../../assets/login.jpg') no-repeat center;
     background-size: 100% auto;
     background-position-y: 20%;
     background-color: #ddd;

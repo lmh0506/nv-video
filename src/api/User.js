@@ -57,3 +57,11 @@ export const checkEmailYzm = form => {
 export const setNewPwd = (email, passWord) => {
   return axios.post('/api/user/setNewPwd', {email, passWord})
 }
+
+export const getUser = id => {
+  return axios.get('/api/user/getUser', {params: {id}})
+}
+
+export const saveUser = (id, user) => {
+  return axios.post('/api/user/saveUser', {id, user})
+}

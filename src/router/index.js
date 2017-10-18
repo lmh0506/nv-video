@@ -1,15 +1,19 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Index from '@/components/Index'
-import rankList from '@/components/rankList'
-import user from '@/components/user'
-import login from '@/components/login'
-import registe from '@/components/registe'
-import admin from '@/components/admin'
-import userList from '@/components/userList'
-import videoType from '@/components/videoType'
-import adminIndex from '@/components/adminIndex'
-import forgetPwd from '@/components/forgetPwd'
+import Index from '@/components/index/Index'
+import rankList from '@/components/rank/rankList'
+import user from '@/components/user/user'
+import login from '@/components/login/login'
+import registe from '@/components/registe/registe'
+import admin from '@/components/admin/admin'
+import userList from '@/components/admin/userList'
+import videoType from '@/components/admin/videoType'
+import adminIndex from '@/components/admin/adminIndex'
+import forgetPwd from '@/components/forgetPwd/forgetPwd'
+import userIndex from '@/components/user/userIndex'
+import userVideo from '@/components/user/userVideo'
+import userStore from '@/components/user/userStore'
+import userSet from '@/components/user/userSet'
 
 Vue.use(Router)
 
@@ -28,8 +32,29 @@ export default new Router({
     },
     {
       path: '/user/:id',
-      name: 'user',
-      component: user
+      component: user,
+      children: [
+        {
+          path: '/',
+          name: 'userIndex',
+          component: userIndex
+        },
+        {
+          path: 'video',
+          name: 'userVideo',
+          component: userVideo
+        },
+        {
+          path: 'favorites',
+          name: 'userStore',
+          component: userStore
+        },
+        {
+          path: 'setting',
+          name: 'userSet',
+          component: userSet
+        }
+      ]
     },
     {
       path: '/login',

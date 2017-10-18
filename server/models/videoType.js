@@ -17,6 +17,12 @@ VideoTypeSchema.statics = {
   findAll (key) {
     key = key ? {'name': new RegExp(key)} : {}
     return this.find(key).exec()
+  },
+  deleteById (id) {
+    return this.remove({'_id': id}).exec()
+  },
+  updateById (id, name) {
+    return this.update({'_id': id}, {'name': name}).exec()
   }
 }
 

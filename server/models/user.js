@@ -80,6 +80,11 @@ UserSchema.statics = {
   },
   updatePwd (email, passWord) {
     return this.update({email}, {'passWord': Md5(passWord)}).exec()
+  },
+  saveUser (id, user) {
+    let {name, email, phone} = user
+    console.log(user)
+    return this.update({'_id': id}, {name, email, phone}).exec()
   }
 }
 

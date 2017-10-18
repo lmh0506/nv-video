@@ -246,6 +246,43 @@ router.post('/update', async (ctx, next) => {
   ctx.body = body
 })
 
+// 获取用户数据
+router.get('/getUser', async (ctx, next) => {
+  let {id} = ctx.request.query
+  let body = {
+    error: 0,
+    msg: ''
+  }
+
+  try {
+    let user = await User.findById(id).exec()
+    let {name, email, phone} = user
+    body.result = {name, email, phone}
+  } catch (err) {
+    console.log(err)
+    body.error = 1
+  }
+
+  ctx.body = body
+})
+
+// 更新用户
+router.post('/saveUser', async (ctx, next) => {
+  let {id, user} = ctx.request.body
+  let body = {
+    error: 0,
+    msg: ''
+  }
+  try {
+    await User.saveUser(id, user)
+  } catch (err) {
+    body.error = 1
+    console.log(err)
+  }
+
+  ctx.body = body
+})
+
 module.exports = router
 
 function randomNum (min, max) {
