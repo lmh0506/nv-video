@@ -2,6 +2,8 @@ const router = require('koa-router')()
 const User = require('../models/user')
 const middleware = require('./middleware')
 const sendEmail = require('../util/mail')
+const fs = require('fs')
+const path = require('path')
 
 var emailMap = new Map()
 const YZM_LEN = 6
@@ -10,7 +12,7 @@ router.prefix('/api/user')
 
 // 检测用户是否存在
 router.post('/exist', async (ctx, next) => {
-  let {userName, name, email, phone} = ctx.request.body
+  let {userName, name, email, phone, id} = ctx.request.body
   let body = {
     error: 0,
     msg: ''
@@ -26,11 +28,17 @@ router.post('/exist', async (ctx, next) => {
       user = await User.findByEmail(email)
     } else if (phone) { // 查找手机号码是否存在
       user = await User.findByPhone(phone)
+    } else if (id) { // 查找id是否存在
+      user = await User.findById(id).exec()
     }
 
     if (user) {
       // 已存在
       body.error = 10001
+    }
+
+    if (id && !ctx.session.user) { // 通过id进行查找用户时  如果未登录则无法查询
+      body.error = 10002
     }
   } catch (err) {
     console.log(err)
@@ -93,10 +101,11 @@ router.post('/login', async (ctx, next) => {
 // 检测用户是否登录
 router.get('/checkLogin', async (ctx, next) => {
   let user = ctx.session.user
+  let {name, avatar, id} = await User.findById(user.id).exec()
   if (user) {
     ctx.body = {
       error: 0,
-      result: user
+      result: {name, avatar, id}
     }
   } else {
     ctx.body = {
@@ -231,13 +240,13 @@ router.post('/delete', async (ctx, next) => {
 
 // 更新用户
 router.post('/update', async (ctx, next) => {
-  let {userForm} = ctx.request.body
+  let {id, userForm} = ctx.request.body
   let body = {
     error: 0,
     msg: ''
   }
   try {
-    await User.updateUser(userForm)
+    await User.updateUser(id, userForm)
   } catch (err) {
     body.error = 1
     console.log(err)
@@ -266,20 +275,54 @@ router.get('/getUser', async (ctx, next) => {
   ctx.body = body
 })
 
-// 更新用户
-router.post('/saveUser', async (ctx, next) => {
-  let {id, user} = ctx.request.body
+// 上传头像
+router.post('/avatar/upload', async (ctx, next) => {
+  let avatar = ctx.request.body.files.file
+  let id = ctx.request.body.fields.id
+
   let body = {
     error: 0,
     msg: ''
   }
-  try {
-    await User.saveUser(id, user)
-  } catch (err) {
-    body.error = 1
-    console.log(err)
-  }
 
+  if (avatar) {
+    // 获取上传文件的路径
+    let avatarPath = avatar.path
+    // 获取上传文件的文件名和后缀
+    let [avatarName, type] = avatar.name.split('.')
+    if (avatarName) {
+      let avatar = fs.readFileSync(avatarPath)
+      let timestamp = Date.now()
+
+      // 初始化保存的文件名称及保存位置
+      let newAvatar = timestamp + '.' + type
+      let uploadPath = path.join(__dirname, '../', '/public/upload/' + id)
+
+      if (!fs.existsSync(uploadPath)) { // 如果上传目录不存在
+        fs.mkdirSync(uploadPath) // 新建上传目录
+      }
+      let newPath = path.join(uploadPath, '/' + newAvatar)
+      try {
+        // 保存文件
+        fs.writeFileSync(newPath, avatar)
+
+        let user = await User.findById(id).exec()
+        let oldAvatar = user.avatar
+        let oldPath = path.join(__dirname, '../', '/public' + oldAvatar)
+        // 删除旧头像
+        if (fs.existsSync(oldPath)) {
+          fs.unlinkSync(oldPath)
+        }
+
+        let url = '/upload/' + id + '/' + newAvatar
+        await User.updateUser(id, {'avatar': url})
+        body.result = url
+      } catch (err) {
+        console.log(err)
+        body.error = 1
+      }
+    }
+  }
   ctx.body = body
 })
 

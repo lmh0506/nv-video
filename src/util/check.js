@@ -1,4 +1,4 @@
-import {checkUserName, checkName, checkEmail, checkPhone} from '@/api/User'
+import {checkExist} from '@/api/User'
 import {checkTypeName} from '@/api/VideoType'
 import {ERR_OK} from '@/config/index'
 
@@ -11,7 +11,7 @@ export const _checkUserName = flag => {
     }
 
     // 查询用户名是否存在
-    checkUserName(value).then(res => {
+    checkExist({'userName': value}).then(res => {
       // 通过flag标识来判断是在登录表单还是注册表单进行的校验 避免出现的提示信息错误
       if (res.data.error === (flag ? 10001 : ERR_OK)) {
         callback(new Error(flag ? '用户名已存在' : '用户名不存在'))
@@ -42,7 +42,7 @@ export const _checkName = (rule, value, callback) => {
   }
 
   // 查询昵称是否存在
-  checkName(value).then(res => {
+  checkExist({'name': value}).then(res => {
     if (res.data.error !== ERR_OK) {
       callback(new Error('该昵称已被占用'))
     } else {
@@ -60,7 +60,7 @@ export const _checkEmail = flag => {
       return callback(new Error('请输入正确的邮箱地址'))
     }
 
-    checkEmail(value).then(res => {
+    checkExist({'email': value}).then(res => {
       if (res.data.error === (flag ? 10001 : ERR_OK)) {
         callback(new Error(flag ? '该邮箱已被注册' : '该邮箱不存在'))
       } else {
@@ -78,7 +78,7 @@ export const _checkPhone = (rule, value, callback) => {
     return callback(new Error('请输入正确的手机号码'))
   }
 
-  checkPhone(value).then(res => {
+  checkExist({'phone': value}).then(res => {
     if (res.data.error !== ERR_OK) {
       callback(new Error('该手机号码已被注册'))
     } else {

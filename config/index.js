@@ -35,6 +35,9 @@ module.exports = {
       '/images': {
         target: 'http://localhost:9000'
       },
+      '/upload': {
+        target: 'http://localhost:9000'
+      },
       '/api': {
         target: 'http://localhost:9000'
       }

@@ -60,9 +60,8 @@ UserSchema.statics = {
   deleteById (id) {
     return this.remove({'_id': id}).exec()
   },
-  updateUser (user) {
-    let {userName, phone, name, email} = user
-    return this.update({'_id': user.id}, {userName, phone, name, email}).exec()
+  updateUser (id, user) {
+    return this.update({'_id': id}, user).exec()
   },
   findAll (page, pageSize, searchKey) {
     const skip = (page - 1) * pageSize
@@ -80,11 +79,6 @@ UserSchema.statics = {
   },
   updatePwd (email, passWord) {
     return this.update({email}, {'passWord': Md5(passWord)}).exec()
-  },
-  saveUser (id, user) {
-    let {name, email, phone} = user
-    console.log(user)
-    return this.update({'_id': id}, {name, email, phone}).exec()
   }
 }
 

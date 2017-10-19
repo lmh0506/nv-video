@@ -183,7 +183,8 @@
         this.getUserList()
       },
       update () {
-        updateUser(this.userForm).then(res => {
+        let {id, email, phone, name, userName} = this.userForm
+        updateUser(id, {email, phone, name, userName}).then(res => {
           if (res.data.error === ERR_OK) {
             this.editUser = false
             this.$message({

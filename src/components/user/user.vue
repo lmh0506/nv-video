@@ -19,6 +19,8 @@
 </template>
 
 <script>
+  import {checkExist} from '@/api/User'
+  import {NO_LOGIN} from '@/config/index'
   import {mapState} from 'vuex'
 
   export default {
@@ -28,24 +30,34 @@
       }
     },
     computed: {
+      activeRoute () {
+        return this.$route.path
+      },
       ...mapState([
         'user'
-      ]),
-      activeRoute () {
-        this.$nextTick(() => {
-          return this.$route.path
-        })
-      }
+      ])
     },
     methods: {
       routerIndex (index) {
+        let id = this.$route.params.id
         switch (index) {
-          case 0: return `/user/${this.user.id}/`
-          case 1: return `/user/${this.user.id}/video`
-          case 2: return `/user/${this.user.id}/favorites`
-          case 3: return `/user/${this.user.id}/setting`
+          case 0: return `/user/${id}/`
+          case 1: return `/user/${id}/video`
+          case 2: return `/user/${id}/favorites`
+          case 3: return `/user/${id}/setting`
         }
       }
+    },
+    beforeRouteEnter (to, from, next) {
+      checkExist({'id': to.params.id}).then(res => {
+        if (res.data.error === 10001) {
+          next()
+        } else if (res.data.error === NO_LOGIN) {
+          next('/login')
+        } else {
+          next('/404')
+        }
+      })
     }
   }
 </script>

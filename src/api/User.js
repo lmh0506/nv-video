@@ -1,19 +1,7 @@
 import axios from 'axios'
 
-export const checkUserName = userName => {
-  return axios.post('/api/user/exist', {userName})
-}
-
-export const checkName = name => {
-  return axios.post('/api/user/exist', {name})
-}
-
-export const checkEmail = email => {
-  return axios.post('/api/user/exist', {email})
-}
-
-export const checkPhone = phone => {
-  return axios.post('/api/user/exist', {phone})
+export const checkExist = params => {
+  return axios.post('/api/user/exist', params)
 }
 
 export const registeUser = form => {
@@ -42,8 +30,8 @@ export const deleteUser = (id) => {
   return axios.post('/api/user/delete', {id})
 }
 
-export const updateUser = (userForm) => {
-  return axios.post('/api/user/update', {userForm})
+export const updateUser = (id, userForm) => {
+  return axios.post('/api/user/update', {id, userForm})
 }
 
 export const sendEmail = email => {
@@ -60,8 +48,4 @@ export const setNewPwd = (email, passWord) => {
 
 export const getUser = id => {
   return axios.get('/api/user/getUser', {params: {id}})
-}
-
-export const saveUser = (id, user) => {
-  return axios.post('/api/user/saveUser', {id, user})
 }
