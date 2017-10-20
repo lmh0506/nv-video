@@ -1,5 +1,6 @@
 const router = require('koa-router')()
 const User = require('../models/user')
+const Video = require('../models/video')
 const middleware = require('./middleware')
 const sendEmail = require('../util/mail')
 const fs = require('fs')
@@ -286,43 +287,72 @@ router.post('/avatar/upload', async (ctx, next) => {
   }
 
   if (avatar) {
-    // 获取上传文件的路径
-    let avatarPath = avatar.path
-    // 获取上传文件的文件名和后缀
-    let [avatarName, type] = avatar.name.split('.')
-    if (avatarName) {
-      let avatar = fs.readFileSync(avatarPath)
-      let timestamp = Date.now()
+    let {fileData, newPath, newFileName} = getFilePath(avatar, id)
+    try {
+      // 保存文件
+      fs.writeFileSync(newPath, fileData)
 
-      // 初始化保存的文件名称及保存位置
-      let newAvatar = timestamp + '.' + type
-      let uploadPath = path.join(__dirname, '../', '/public/upload/' + id)
-
-      if (!fs.existsSync(uploadPath)) { // 如果上传目录不存在
-        fs.mkdirSync(uploadPath) // 新建上传目录
+      let user = await User.findById(id).exec()
+      let oldAvatar = user.avatar
+      let oldPath = path.join(__dirname, '../', '/public' + oldAvatar)
+      // 删除旧头像
+      if (fs.existsSync(oldPath)) {
+        fs.unlinkSync(oldPath)
       }
-      let newPath = path.join(uploadPath, '/' + newAvatar)
-      try {
-        // 保存文件
-        fs.writeFileSync(newPath, avatar)
 
-        let user = await User.findById(id).exec()
-        let oldAvatar = user.avatar
-        let oldPath = path.join(__dirname, '../', '/public' + oldAvatar)
-        // 删除旧头像
-        if (fs.existsSync(oldPath)) {
-          fs.unlinkSync(oldPath)
-        }
-
-        let url = '/upload/' + id + '/' + newAvatar
-        await User.updateUser(id, {'avatar': url})
-        body.result = url
-      } catch (err) {
-        console.log(err)
-        body.error = 1
-      }
+      let url = '/upload/' + id + '/' + newFileName
+      await User.updateUser(id, {'avatar': url})
+      body.result = url
+    } catch (err) {
+      console.log(err)
+      body.error = 1
     }
   }
+  ctx.body = body
+})
+
+// 上传视频
+router.post('/video/upload', async (ctx, next) => {
+  let {file, videoImg} = ctx.request.body.files
+  let {id, name, type, vid} = ctx.request.body.fields
+
+  let body = {
+    error: 0,
+    msg: ''
+  }
+
+  if (file) {
+    let {fileData, newPath, newFileName} = getFilePath(file, id)
+    try {
+      // 保存文件
+      fs.writeFileSync(newPath, fileData)
+      let video = {name, type}
+
+      let url = '/upload/' + id + '/' + newFileName
+      video.src = url
+      video.publisher = id
+
+      video = new Video(video)
+      video = await video.save()
+      body.result = {'vid': video.id}
+    } catch (err) {
+      console.log(err)
+      body.error = 1
+    }
+  } else {
+    let {fileData, newPath, newFileName} = getFilePath(videoImg, id)
+    try {
+      // 保存文件
+      fs.writeFileSync(newPath, fileData)
+
+      let url = '/upload/' + id + '/' + newFileName
+      await Video.updateImg(vid, url)
+    } catch (err) {
+      console.log(err)
+      body.error = 1
+    }
+  }
+
   ctx.body = body
 })
 
@@ -330,4 +360,29 @@ module.exports = router
 
 function randomNum (min, max) {
   return Math.floor(Math.random() * (max - min) + min)
+}
+
+function getFilePath (file, id) { // 获取文件上传路径和数据
+  var result = {}
+  // 获取上传文件的路径
+  let filePath = file.path
+  // 获取上传文件的文件名和后缀
+  let fileNameArr = file.name.split('.')
+  let fileName = fileNameArr[0]
+  let fileType = fileNameArr[fileNameArr.length - 1]
+  if (fileName) {
+    result.fileData = fs.readFileSync(filePath)
+    let timestamp = Date.now()
+
+    // 初始化保存的文件名称及保存位置
+    result.newFileName = timestamp + '.' + fileType
+    let uploadPath = path.join(__dirname, '../', '/public/upload/' + id)
+
+    if (!fs.existsSync(uploadPath)) { // 如果上传目录不存在
+      fs.mkdirSync(uploadPath) // 新建上传目录
+    }
+    result.newPath = path.join(uploadPath, '/' + result.newFileName)
+  }
+
+  return result
 }
