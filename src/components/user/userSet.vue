@@ -85,9 +85,14 @@
               </el-upload>
             </el-form-item>
             <el-form-item label="视频分类" prop="type">
-              <el-radio-group v-model="videoForm.type" v-if="typeList.length > 0">
-                <el-radio v-for="(rad, index) in typeList" :key="index" :label="rad._id">{{rad.name}}</el-radio>
-              </el-radio-group>
+              <el-select v-model="videoForm.type" placeholder="请选择" v-if="typeList.length > 0">
+                <el-option
+                  v-for="item in typeList"
+                  :key="item._id"
+                  :label="item.name"
+                  :value="item._id">
+                </el-option>
+              </el-select>
             </el-form-item>
             <el-form-item>
               <el-button size="small" type="success" @click="videoUpload">上传到服务器</el-button>
