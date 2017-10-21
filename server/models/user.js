@@ -79,6 +79,9 @@ UserSchema.statics = {
   },
   updatePwd (email, passWord) {
     return this.update({email}, {'passWord': Md5(passWord)}).exec()
+  },
+  removeUploadVideo (id, vid) {
+    return this.update({'_id': id}, {$pull: {'uploadVideo': vid}}).exec()
   }
 }
 

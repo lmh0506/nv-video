@@ -43,7 +43,7 @@
         </el-tab-pane>
         <el-tab-pane label="上传视频">
           <h3 class="user-set-title">上传视频</h3>
-          <el-form :model="videoForm" :rules="videoRules" label-width="100px" class="video-ruleForm" ref="videoForm">
+          <el-form :model="videoForm" status-icon :rules="videoRules" label-width="100px" class="video-ruleForm" ref="videoForm">
             <el-form-item label="视频名称" prop="name">
               <el-input v-model="videoForm.name"></el-input>
             </el-form-item>
@@ -99,7 +99,6 @@
             </el-form-item>
           </el-form>
         </el-tab-pane>
-        <el-tab-pane label="定时任务补偿">定时任务补偿</el-tab-pane>
       </el-tabs>
     </div>
   </div>
@@ -110,7 +109,7 @@
   import {getUser, updateUser} from '@/api/User'
   import {getTypeList} from '@/api/VideoType'
   import {ERR_OK, NO_LOGIN} from '@/config/index'
-  import {_checkName, _checkEmail, _checkPhone} from '@/util/check'
+  import {_checkName, _checkEmail, _checkPhone, _checkVideoName} from '@/util/check'
 
   export default {
     data () {
@@ -143,7 +142,7 @@
         },
         videoRules: { // 视频校验表单
           name: [
-            { required: true, message: '请填写视频名称', trigger: 'blur' }
+            { validator: _checkVideoName, trigger: 'blur' }
           ],
           type: [
             { required: true, message: '请选择视频类型', trigger: 'blur' }
@@ -241,7 +240,6 @@
         return isVideo && isLt100M
       },
       VideoImgChange (file, fileList) {
-        console.log()
         if (fileList.length > 1 || !this.beforeAvatarUpload(file.raw)) {
           fileList.splice(0, 1)
         } else {
@@ -251,7 +249,6 @@
       videoUpload () {
         this.$refs['videoForm'].validate((valid) => {
           if (valid) {
-            console.log(this.$refs.videoUpload.uploadFiles, this.$refs.videoImg.uploadFiles)
             if (this.$refs.videoUpload.uploadFiles.length === 0) {
               this.$message.error('请选择要上传的视频')
             } else if (this.$refs.videoImg.uploadFiles.length === 0) {
@@ -264,7 +261,7 @@
           }
         })
       },
-      handleVideoSuccess (res) { // 视频上传结束
+      handleVideoSuccess (res, file, fileList) { // 视频上传结束
         if (res.error === ERR_OK) {
           this.videoForm.vid = res.result.vid
           this.$refs.videoImg.submit()
@@ -274,9 +271,12 @@
           this.$message.error('视频上传失败')
         }
       },
-      videoImgSuccess (res) { // 视频预览图上传结束
+      videoImgSuccess (res, file, fileList) { // 视频预览图上传结束
         if (res.error === ERR_OK) {
           this.$message.success('上传成功')
+          this.$refs.videoImg.clearFiles()
+          this.$refs.videoUpload.clearFiles()
+          this.$refs.videoForm.resetFields()
         } else if (res.error === NO_LOGIN) {
           this.$router.push('/')
         } else {

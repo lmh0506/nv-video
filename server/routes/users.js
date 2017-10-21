@@ -1,8 +1,10 @@
 const router = require('koa-router')()
 const User = require('../models/user')
+const VideoType = require('../models/videoType')
 const Video = require('../models/video')
 const middleware = require('./middleware')
 const sendEmail = require('../util/mail')
+const file = require('../util/file')
 const fs = require('fs')
 const path = require('path')
 
@@ -102,8 +104,8 @@ router.post('/login', async (ctx, next) => {
 // 检测用户是否登录
 router.get('/checkLogin', async (ctx, next) => {
   let user = ctx.session.user
-  let {name, avatar, id} = await User.findById(user.id).exec()
   if (user) {
+    let {name, avatar, id} = await User.findById(user.id).exec()
     ctx.body = {
       error: 0,
       result: {name, avatar, id}
@@ -294,10 +296,9 @@ router.post('/avatar/upload', async (ctx, next) => {
 
       let user = await User.findById(id).exec()
       let oldAvatar = user.avatar
-      let oldPath = path.join(__dirname, '../', '/public' + oldAvatar)
-      // 删除旧头像
-      if (fs.existsSync(oldPath)) {
-        fs.unlinkSync(oldPath)
+      if (oldAvatar.indexOf('default') < 0) {
+        // 删除旧头像 但不是默认头像
+        file.deleteFile(oldAvatar)
       }
 
       let url = '/upload/' + id + '/' + newFileName
@@ -332,9 +333,21 @@ router.post('/video/upload', async (ctx, next) => {
       video.src = url
       video.publisher = id
 
+      // 保存视频数据
       video = new Video(video)
       video = await video.save()
-      body.result = {'vid': video.id}
+
+      // 将视频添加到相应的用户和类型中  以便关联
+      let vid = video.id
+      let user = await User.findById(id).exec()
+      user.uploadVideo.push(vid)
+      await User.updateUser(id, {'uploadVideo': user.uploadVideo})
+
+      let vType = await VideoType.findById(type).exec()
+      vType.videos.push(vid)
+      await vType.save()
+
+      body.result = {vid}
     } catch (err) {
       console.log(err)
       body.error = 1

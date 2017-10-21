@@ -8,6 +8,7 @@ import registe from '@/components/registe/registe'
 import admin from '@/components/admin/admin'
 import userList from '@/components/admin/userList'
 import videoType from '@/components/admin/videoType'
+import videoAudit from '@/components/admin/videoAudit'
 import adminIndex from '@/components/admin/adminIndex'
 import forgetPwd from '@/components/forgetPwd/forgetPwd'
 import userIndex from '@/components/user/userIndex'
@@ -89,6 +90,11 @@ export default new Router({
           path: 'videoType',
           name: 'videoType',
           component: videoType
+        },
+        {
+          path: 'videoAudit',
+          name: 'videoAudit',
+          component: videoAudit
         }
       ]
     }

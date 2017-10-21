@@ -1,5 +1,6 @@
 import {checkExist} from '@/api/User'
 import {checkTypeName} from '@/api/VideoType'
+import {checkVideoExist} from '@/api/Video'
 import {ERR_OK} from '@/config/index'
 
 // 校验用户名是否规范
@@ -100,6 +101,22 @@ export const _checkTypeName = (rule, value, callback) => {
   checkTypeName(value).then(res => {
     if (res.data.error !== ERR_OK) {
       callback(new Error('该分类名称已存在'))
+    } else {
+      callback()
+    }
+  })
+}
+
+export const _checkVideoName = (rule, value, callback) => {
+  // 判断视频名称是否为空
+  if (!value) {
+    return callback(new Error('请输入视频名称'))
+  }
+
+  // 查询分类名称是否存在
+  checkVideoExist({'name': value}).then(res => {
+    if (res.data.error !== ERR_OK) {
+      callback(new Error('该视频名称已存在'))
     } else {
       callback()
     }

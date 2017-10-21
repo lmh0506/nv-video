@@ -1,6 +1,9 @@
 const router = require('koa-router')()
 const VideoType = require('../models/videoType')
+const User = require('../models/user')
+const Video = require('../models/video')
 const middleware = require('./middleware')
+const file = require('../util/file')
 
 router.prefix('/api/video/type')
 
@@ -79,9 +82,17 @@ router.post('/delete', async (ctx, next) => {
 
   try {
     // 查询删除的类型
-    // let type = await VideoType.findById(id).exec()
+    let type = await VideoType.findById(id).exec()
     // 删除该类型下的所有视频
-    // 。。。。
+    type.videos.forEach(async v => {
+      let video = await Video.findById(v).exec()
+      await Video.deleteById(v)
+      // 删除视频文件
+      file.deleteFile(video.src)
+      file.deleteFile(video.img)
+
+      await User.removeUploadVideo(video.publisher, v)
+    })
 
     // 删除类型
     await VideoType.deleteById(id)
