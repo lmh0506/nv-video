@@ -61,7 +61,7 @@ VideoSchema.statics = {
     return this.remove({'_id': id}).exec()
   },
   findAuditVideo (name) { // 查找审核中的视频
-    let query = name ? {name, 'shenhe': 'ing'} : {'shenhe': 'ing'}
+    let query = name ? {'name': new RegExp(name), 'shenhe': 'ing'} : {'shenhe': 'ing'}
     return this.find(query)
       .populate({
         path: 'publisher',

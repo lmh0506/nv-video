@@ -52,8 +52,12 @@
       title="视频审核"
       :visible.sync="auditDialogVisible"
       width="50%"
+      @close="hideAuditDialog"
       center>
-      <d-player :video='videoObj' :contextmenu="contextmenu" v-if="videoObj.url" ref="player"></d-player>
+      <d-player :video='videoObj' 
+                :contextmenu="contextmenu"
+                preload="metadata"
+                ref="player"></d-player>
       <p class="select-wrapper">
         <el-select class="shenheSelect" v-model="shenhe" placeholder="请选择">
           <el-option
@@ -101,7 +105,8 @@
           value: '视频预览图违规',
           label: '视频预览图违规'
         }],
-        shenhe: '审核通过'
+        shenhe: '审核通过',
+        videoShow: false
       }
     },
     methods: {
@@ -143,6 +148,9 @@
             this.$router.push('/')
           }
         })
+      },
+      canplay () {
+        this.videoShow = true
       }
     },
     components: {
