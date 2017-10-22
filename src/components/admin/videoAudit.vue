@@ -44,19 +44,18 @@
         <template scope="scope">
           <el-button
             size="small"
-            @click="showAuditDialog(scope.row)">查看</el-button>
+            @click="showVideoDialog(scope.row)">查看</el-button>
         </template>
       </el-table-column>
     </el-table>
     <el-dialog
       title="视频审核"
-      :visible.sync="auditDialogVisible"
+      :visible.sync="dialogVisible"
       width="50%"
-      @close="hideAuditDialog"
+      @close="hideVideoDialog"
       center>
       <d-player :video='videoObj' 
                 :contextmenu="contextmenu"
-                preload="metadata"
                 ref="player"></d-player>
       <p class="select-wrapper">
         <el-select class="shenheSelect" v-model="shenhe" placeholder="请选择">
@@ -69,7 +68,7 @@
         </el-select>
       </p>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="hideAuditDialog">取 消</el-button>
+        <el-button @click="hideVideoDialog">取 消</el-button>
         <el-button type="primary" @click="submit">提交审核</el-button>
       </span>
     </el-dialog>
@@ -79,16 +78,12 @@
 <script>
   import {getAuditList, submitShenhe} from '@/api/Video'
   import {ERR_OK, NO_LOGIN} from '@/config/index'
-  import VueDPlayer from 'vue-dplayer'
+  import {videoListMixin} from '@/mixins/videoListMixin'
 
   export default {
+    mixins: [videoListMixin],
     data () {
       return {
-        searchKey: '',
-        videoList: [],
-        loading: false,
-        auditDialogVisible: false,
-        videoObj: {},
         contextmenu: [
           {
             text: '刷新',
@@ -105,8 +100,7 @@
           value: '视频预览图违规',
           label: '视频预览图违规'
         }],
-        shenhe: '审核通过',
-        videoShow: false
+        shenhe: '审核通过'
       }
     },
     methods: {
@@ -122,24 +116,11 @@
           }
         })
       },
-      showAuditDialog (video) {
-        this.auditDialogVisible = true
-        let {src, img, _id} = video
-        this.videoObj = {
-          'url': src,
-          'pic': img,
-          'id': _id
-        }
-      },
-      hideAuditDialog () {
-        this.auditDialogVisible = false
-        this.$refs.player.dp.pause()
-      },
       submit () { // 提交审核
         let id = this.videoObj.id
         submitShenhe(id, this.shenhe).then(res => {
           if (res.data.error === ERR_OK) {
-            this.hideAuditDialog()
+            this.hideVideoDialog()
             let index = this.videoList.findIndex(v => {
               return v._id === id
             })
@@ -148,13 +129,7 @@
             this.$router.push('/')
           }
         })
-      },
-      canplay () {
-        this.videoShow = true
       }
-    },
-    components: {
-      'd-player': VueDPlayer
     },
     mounted () {
       this.getAuditList()

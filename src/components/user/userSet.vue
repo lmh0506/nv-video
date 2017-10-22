@@ -59,7 +59,7 @@
                 :on-success="handleVideoSuccess">
                 
                 <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
-                <div slot="tip" class="el-upload__tip">只能上传avi/mp4/mov/rmvb文件，且不超过100mb</div>
+                <div slot="tip" class="el-upload__tip">只能上传mp4文件，且不超过100mb</div>
               </el-upload>
             </el-form-item>
             <el-form-item label="视频预览图">
@@ -227,11 +227,11 @@
         }
       },
       beforeVideoUpload (file) { // 上传格式限制
-        const isVideo = /video\/[avi|mp4|mov|rmvb]/.test(file.type)
+        const isVideo = /video\/[mp4]/.test(file.type)
         const isLt100M = file.size / 1024 / 1024 < 100
 
         if (!isVideo) {
-          this.$message.error('上传视频只能是 avi或mp4或mov或rmvb 格式!')
+          this.$message.error('上传视频只能是 mp4 格式!')
         }
         if (!isLt100M) {
           this.$message.error('上传视频大小不能超过 100MB!')

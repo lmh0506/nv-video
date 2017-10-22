@@ -27,6 +27,7 @@
                 <el-menu-item-group>
                   <el-menu-item index="/admin/videoType">类型管理</el-menu-item>
                   <el-menu-item index="/admin/videoAudit">视频审核</el-menu-item>
+                  <el-menu-item index="/admin/videoList">视频列表</el-menu-item>
                 </el-menu-item-group>
               </el-submenu>
             </el-menu>

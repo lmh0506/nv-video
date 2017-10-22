@@ -60,8 +60,13 @@ VideoSchema.statics = {
   deleteById (id) {
     return this.remove({'_id': id}).exec()
   },
-  findAuditVideo (name) { // 查找审核中的视频
-    let query = name ? {'name': new RegExp(name), 'shenhe': 'ing'} : {'shenhe': 'ing'}
+  findAll (name, flag) { // 查找全部的视频
+    let query
+    if (flag) { // 判断是否查询审核中的全部视频
+      query = name ? {'name': new RegExp(name)} : {}
+    } else {
+      query = name ? {'name': new RegExp(name), 'shenhe': 'ing'} : {'shenhe': 'ing'}
+    }
     return this.find(query)
       .populate({
         path: 'publisher',
@@ -72,6 +77,9 @@ VideoSchema.statics = {
         select: 'name'
       })
       .exec()
+  },
+  findByUserId (id) { // 查找用户的视频列表
+    return this.find({'publisher': id}).exec()
   }
 }
 

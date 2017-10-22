@@ -20,6 +20,7 @@
 </script>
 
 <style>
+  @import './assets/icon/iconfont.css';
   html, body{
     height: 100%;
   }

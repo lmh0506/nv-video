@@ -23,6 +23,9 @@ VideoTypeSchema.statics = {
   },
   updateById (id, name) {
     return this.update({'_id': id}, {'name': name}).exec()
+  },
+  deleteVideo (id, vid) {
+    return this.update({'_id': id}, {$pull: {'videos': vid}}).exec()
   }
 }
 
