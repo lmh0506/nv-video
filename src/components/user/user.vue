@@ -67,6 +67,7 @@
   .user-wrapper{
     width: 1100px;
     margin: 0px auto;
+    position: relative;
     min-height: calc(100% - 162px);
 
     .user-banner{

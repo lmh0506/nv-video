@@ -48,6 +48,15 @@
         </template>
       </el-table-column>
     </el-table>
+    <div class="block">
+      <el-pagination
+        @current-change="handleCurrentChange"
+        :current-page.sync="currentPage"
+        :page-size="pageSize"
+        layout="prev, pager, next, jumper"
+        :total="total">
+      </el-pagination>
+    </div>
     <el-dialog
       title="视频审核"
       :visible.sync="dialogVisible"
@@ -104,15 +113,13 @@
       }
     },
     methods: {
-      search () {
-        this.getAuditList()
-      },
       getAuditList () { // 获取审核视频列表
         this.loading = true
-        getAuditList(this.searchKey).then(res => {
+        getAuditList(this.searchKey, this.currentPage, this.pageSize).then(res => {
           if (res.data.error === ERR_OK) {
             this.videoList = res.data.result
             this.loading = false
+            this.total = res.data.total
           }
         })
       },
@@ -121,14 +128,15 @@
         submitShenhe(id, this.shenhe).then(res => {
           if (res.data.error === ERR_OK) {
             this.hideVideoDialog()
-            let index = this.videoList.findIndex(v => {
-              return v._id === id
-            })
-            this.videoList.splice(index, 1)
+            this.getAuditList()
           } else if (res.data.error === NO_LOGIN) {
             this.$router.push('/')
           }
         })
+      },
+      handleCurrentChange (page) {
+        this.currentPage = page
+        this.getAuditList()
       }
     },
     mounted () {
@@ -145,5 +153,14 @@
   .select-wrapper{
     text-align: center;
     padding-top: 10px;
+  }
+  .block {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translate(-50%, 0);
+    .el-pagination{
+      text-align: center;
+    }
   }
 </style>

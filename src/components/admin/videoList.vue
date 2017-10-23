@@ -66,6 +66,15 @@
           </template>
         </el-table-column>
       </el-table>
+      <div class="block">
+        <el-pagination
+          @current-change="handleCurrentChange"
+          :current-page.sync="currentPage"
+          :page-size="pageSize"
+          layout="prev, pager, next, jumper"
+          :total="total">
+        </el-pagination>
+      </div>
       <el-dialog
         title="查看视频内容"
         :visible.sync="dialogVisible"
@@ -114,17 +123,15 @@
     methods: {
       getVideoList () {
         this.loading = true
-        getVideoList(this.searchKey).then(res => {
+        getVideoList(this.searchKey, this.currentPage, this.pageSize).then(res => {
           if (res.data.error === ERR_OK) {
             this.videoList = this.normalizList(res.data.result)
+            this.total = res.data.total
             this.loading = false
           } else if (res.data.error === NO_LOGIN) {
             this.$router.push('/login')
           }
         })
-      },
-      search () {
-        this.getVideoList()
       },
       normalizList (list) { // 格式化列表
         list.forEach(v => {
@@ -149,14 +156,14 @@
         return row.shenhe === value
       },
       deleteVideo (index, id) { // 删除视频
-        this.$confirm('此操作将永久删除该分类及该分类下的所有视频, 请谨慎操作?', '警告', {
+        this.$confirm('此操作将永久删除该视频, 请谨慎操作?', '警告', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
           deleteVideo(id).then(res => {
             if (res.data.error === ERR_OK) {
-              this.videoList.splice(index, 1)
+              this.getVideoList()
               this.$message({
                 type: 'success',
                 message: '删除成功!'
@@ -171,6 +178,10 @@
             message: '已取消删除'
           })
         })
+      },
+      handleCurrentChange (page) {
+        this.currentPage = page
+        this.getVideoList()
       }
     },
     mounted () {
@@ -183,5 +194,14 @@
 <style lang='scss' scoped>
   .demo-form-inline{
     margin-top: 15px;
+  }
+  .block {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translate(-50%, 0);
+    .el-pagination{
+      text-align: center;
+    }
   }
 </style>

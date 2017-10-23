@@ -16,6 +16,7 @@ import userIndex from '@/components/user/userIndex'
 import userVideo from '@/components/user/userVideo'
 import userStore from '@/components/user/userStore'
 import userSet from '@/components/user/userSet'
+import videoDetail from '@/components/video/videoDetail'
 
 Vue.use(Router)
 
@@ -103,6 +104,11 @@ export default new Router({
           component: videoList
         }
       ]
+    },
+    {
+      path: '/video/:id',
+      name: 'videoDetail',
+      component: videoDetail
     }
   ]
 })

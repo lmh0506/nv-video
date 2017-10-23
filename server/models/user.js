@@ -82,6 +82,23 @@ UserSchema.statics = {
   },
   removeUploadVideo (id, vid) {
     return this.update({'_id': id}, {$pull: {'uploadVideo': vid}}).exec()
+  },
+  addStoreVideo (uid, vid) { // 添加收藏
+    return this.update({'_id': uid}, {$push: {'storeVideo': vid}})
+  },
+  removeStoreVideo (uid, vid) { // 取消收藏
+    return this.update({'_id': uid}, {$pull: {'storeVideo': vid}})
+  },
+  findStoreVideo (uid, vid) { // 查找收藏列表中是否存在某视频
+    return this.findOne({'_id': uid, 'storeVideo': vid})
+  },
+  findAllStore (id) { // 获取收藏列表
+    return this.findOne({'_id': id})
+      .populate({
+        path: 'storeVideo',
+        select: 'name src img fav_num vplaynum shenhe'
+      })
+      .exec()
   }
 }
 

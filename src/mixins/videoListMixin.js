@@ -7,7 +7,10 @@ export const videoListMixin = {
       videoList: [],
       loading: false,
       dialogVisible: false,
-      videoObj: {}
+      videoObj: {},
+      pageSize: 10, // 每页显示数目
+      total: 0, // 总数
+      currentPage: 1 // 当前页码
     }
   },
   methods: {
@@ -23,6 +26,9 @@ export const videoListMixin = {
     hideVideoDialog () {
       this.dialogVisible = false
       this.$refs.player.dp.pause()
+    },
+    search () {
+      this.handleCurrentChange(1)
     }
   },
   components: {

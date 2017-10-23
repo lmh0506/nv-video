@@ -49,3 +49,15 @@ export const setNewPwd = (email, passWord) => {
 export const getUser = id => {
   return axios.get('/api/user/getUser', {params: {id}})
 }
+
+export const getIsStore = (uid, vid) => {
+  return axios.get('/api/user/video/isStore', {params: {uid, vid}})
+}
+
+export const getStoreList = (id, page, pageSize) => {
+  return axios.get('/api/user/video/storeList', {params: {id, page, pageSize}})
+}
+
+export const deleteStoreVideo = (uid, vid) => {
+  return axios.post('/api/user/video/removeStore', {uid, vid})
+}

@@ -12,20 +12,34 @@
       <el-button type="text" @click="editVideo">{{editMsg}}<i class="el-icon-edit"></i></el-button>
     </h3>
     <div class="my-video-wrapper" v-if="activeTitle === 0">
-      <el-row v-if="videoList.length > 0">
-        <el-col :span="4" v-for="(v, index) in videoList" :key="index">
-          <div class="grid-content">
-            <base-video @deleteVideo="deleteVideo" :video='v' :edit="edit"></base-video>
-          </div>
-        </el-col>
-      </el-row>
+      <template v-if="videoList.length > 0">
+        <el-row>
+          <el-col :span="4" v-for="(v, index) in videoList" :key="index">
+            <div class="grid-content">
+              <base-video @deleteVideo="deleteVideo($event, index, videoList)"            :video='v' 
+                        :edit="edit"
+                        :videoRouter="true"></base-video>
+            </div>
+          </el-col>
+        </el-row>
+        <div class="block">
+          <el-pagination
+            @current-change="handleCurrentChange"
+            :current-page.sync="currentPage"
+            :page-size="pageSize"
+            layout="prev, pager, next, jumper"
+            :total="total">
+          </el-pagination>
+        </div>
+      </template>
       <h1 class="nolist-title" v-else-if="videoList.length === 0">你还没有上传过视频</h1>
     </div>
     <div class="my-video-ing" v-else-if="activeTitle === 1">
       <el-row v-if="ingList.length > 0">
         <el-col :span="4" v-for="(v, index) in ingList" :key="index">
           <div class="grid-content">
-            <base-video @deleteVideo="deleteVideo" :video='v' :edit="edit"></base-video>
+            <base-video @deleteVideo="deleteVideo($event, index, ingList)"                  :video='v' 
+                        :edit="edit"></base-video>
           </div>
         </el-col>
       </el-row>
@@ -35,7 +49,7 @@
       <el-row v-if="noPassList.length > 0">
         <el-col :span="4" v-for="(v, index) in noPassList" :key="index">
           <div class="grid-content">
-            <base-video @deleteVideo="deleteVideo" :video='v' :edit="edit"></base-video>
+            <base-video @deleteVideo="deleteVideo($event, index, noPassList)" :video='v' :edit="edit"></base-video>
           </div>
         </el-col>
       </el-row>
@@ -58,14 +72,17 @@
         ingList: [],
         noPassList: [],
         edit: false,
-        editMsg: '编辑视频'
+        editMsg: '编辑视频',
+        pageSize: 24, // 每页显示数目
+        total: 0, // 总数
+        currentPage: 1 // 当前页码
       }
     },
     methods: {
       changeTitle (index) {
         this.activeTitle = index
       },
-      getUserVideoList () { // 获取用户的视频列表
+      getUserVideoList () { // 获取用户审核中和审核未通过的视频列表
         getUserVideoList(this.$route.params.id).then(res => {
           if (res.data.error === ERR_OK) {
             this.normalizeList(res.data.result)
@@ -74,34 +91,46 @@
           }
         })
       },
-      normalizeList (list) { // 格式化视频列表
-        for (let i = 0; i < 20; i++) {
-          list.forEach(v => {
-            switch (v.shenhe) {
-              case '审核通过': {
-                this.videoList.push(v)
-                break
-              }
-              case 'ing': {
-                this.ingList.push(v)
-                break
-              }
-              default : {
-                this.noPassList.push(v)
-              }
-            }
-          })
-        }
-      },
-      deleteVideo (id) {
-        deleteVideo(id).then(res => {
+      getPassList () { // 获取用户审核通过的视频列表
+        getUserVideoList(this.$route.params.id, this.currentPage, this.pageSize).then(res => {
           if (res.data.error === ERR_OK) {
-            this.$message.success('删除成功')
+            this.videoList = res.data.result
+            this.total = res.data.total
           } else if (res.data.error === NO_LOGIN) {
             this.$router.push('/login')
-          } else {
-            this.$message('服务器繁忙，删除失败')
           }
+        })
+      },
+      normalizeList (list) { // 格式化视频列表
+        list.forEach(v => {
+          if (v.shenhe === 'ing') {
+            this.ingList.push(v)
+          } else {
+            this.noPassList.push(v)
+          }
+        })
+      },
+      deleteVideo (id, index, list) {
+        this.$confirm('此操作将永久删除该视频, 请谨慎操作?', '警告', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          deleteVideo(id).then(res => {
+            if (res.data.error === ERR_OK) {
+              this.$message.success('删除成功')
+              this.getPassList()
+            } else if (res.data.error === NO_LOGIN) {
+              this.$router.push('/login')
+            } else {
+              this.$message('服务器繁忙，删除失败')
+            }
+          })
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
         })
       },
       editVideo () {
@@ -111,9 +140,14 @@
         } else {
           this.editMsg = '编辑视频'
         }
+      },
+      handleCurrentChange (page) {
+        this.currentPage = page
+        this.getPassList()
       }
     },
     mounted () {
+      this.getPassList()
       this.getUserVideoList()
     },
     components: {
@@ -126,6 +160,7 @@
 <style lang='scss' scoped>
   .userVideo-wrapper{
     padding: 10px;
+    padding-bottom: 40px;
 
     .my-video-title{
       margin-left: 20px;
@@ -162,6 +197,16 @@
     .nolist-title {
       margin: 50px auto 0;
       text-align: center;
+    }
+
+    .block {
+      position: absolute;
+      bottom: 10px;
+      left: 50%;
+      transform: translate(-50%, 0);
+      .el-pagination{
+        text-align: center;
+      }
     }
   }
 

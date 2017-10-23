@@ -154,11 +154,11 @@
         }).then(() => {
           deleteUser(id).then(res => {
             if (res.data.error === ERR_OK) {
-              this.userList.splice(index, 1)
               this.$message({
                 type: 'success',
                 message: '删除成功!'
               })
+              this.getUserList()
             } else if (res.data.error === NO_LOGIN) {
               this.$router.push('/login')
             }

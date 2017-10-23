@@ -369,6 +369,75 @@ router.post('/video/upload', async (ctx, next) => {
   ctx.body = body
 })
 
+// 获取收藏列表
+router.get('/video/storeList', async (ctx, next) => {
+  let {id, page, pageSize} = ctx.request.query
+  let body = {
+    error: 0,
+    msg: ''
+  }
+
+  page = page | 0
+  pageSize = pageSize | 0
+  const skip = (page - 1) * pageSize
+
+  try {
+    let user = await User.findAllStore(id)
+    body.total = user.storeVideo.length
+    if (user) {
+      let list = user.storeVideo
+      body.result = list.slice(skip, skip + pageSize)
+    } else {
+      body.result = []
+    }
+  } catch (err) {
+    console.log(err)
+    body.error = 1
+  }
+
+  ctx.body = body
+})
+
+// 判断用户是否已收藏
+router.get('/video/isStore', async (ctx, next) => {
+  let {uid, vid} = ctx.request.query
+  let body = {
+    error: 0,
+    msg: ''
+  }
+
+  try {
+    let user = await User.findStoreVideo(uid, vid)
+    if (user) {
+      body.result = true
+    } else {
+      body.result = false
+    }
+  } catch (err) {
+    console.log(err)
+    body.error = 1
+  }
+
+  ctx.body = body
+})
+
+router.post('/video/removeStore', async (ctx, next) => {
+  let {uid, vid} = ctx.request.body
+  let body = {
+    error: 0,
+    msg: ''
+  }
+
+  try {
+    await User.removeStoreVideo(uid, vid)
+    await Video.storeNumChange(vid, false)
+  } catch (err) {
+    console.log(err)
+    body.error = 1
+  }
+  ctx.body = body
+})
+
 module.exports = router
 
 function randomNum (min, max) {

@@ -10,19 +10,19 @@ var VideoSchema = new mongoose.Schema({
     type: Number,
     default: 0
   }, // 视频播放次数
-  createTime: Date, // 视频发布时间
+  createTime: String, // 视频发布时间
   img: {
     type: String,
     default: ''
   }, // 视频预览图
   comment: [{
     type: ObjectId,
-    ref: 'User'
+    ref: 'Comment'
   }], // 视频评论
-  score: {
-    type: Number,
-    default: 0
-  }, // 视频评分
+  score: [{
+    user_id: ObjectId,
+    rate: Number
+  }], // 视频评分
   type: {
     type: ObjectId,
     ref: 'VideoType'
@@ -60,13 +60,9 @@ VideoSchema.statics = {
   deleteById (id) {
     return this.remove({'_id': id}).exec()
   },
-  findAll (name, flag) { // 查找全部的视频
-    let query
-    if (flag) { // 判断是否查询审核中的全部视频
-      query = name ? {'name': new RegExp(name)} : {}
-    } else {
-      query = name ? {'name': new RegExp(name), 'shenhe': 'ing'} : {'shenhe': 'ing'}
-    }
+  findAll (name, page, pageSize, flag) { // 查找全部的视频
+    let query = getQuery(name, flag)
+    const skip = (page - 1) * pageSize
     return this.find(query)
       .populate({
         path: 'publisher',
@@ -76,10 +72,54 @@ VideoSchema.statics = {
         path: 'type',
         select: 'name'
       })
+      .skip(skip)
+      .limit(pageSize)
       .exec()
   },
-  findByUserId (id) { // 查找用户的视频列表
-    return this.find({'publisher': id}).exec()
+  findByUserId (id, page, pageSize) { // 查找用户的视频列表
+    if (page && pageSize) {
+      const skip = (page - 1) * pageSize
+      return this.find({'publisher': id, 'shenhe': '审核通过'})
+        .skip(skip)
+        .limit(pageSize)
+        .exec()
+    } else {
+      return this.find({'publisher': id, 'shenhe': {$ne: '审核通过'}}).exec()
+    }
+  },
+  getUserVideoTotal (id) {
+    return this.count({'publisher': id, 'shenhe': '审核通过'}).exec()
+  },
+  getTotal (name, flag) {
+    let query = getQuery(name, flag)
+    return this.count(query).exec()
+  },
+  findVideo (id) {
+    return this.findById(id)
+      .populate({
+        path: 'publisher',
+        select: 'name avatar'
+      })
+      .populate({
+        path: 'type',
+        select: 'name'
+      })
+      .exec()
+  },
+  playNumUp (id) {
+    return this.update({'_id': id}, {$inc: {'vplaynum': 1}}).exec()
+  },
+  storeNumChange (id, flag) {
+    flag = flag ? 1 : -1
+    return this.update({'_id': id}, {$inc: {'fav_num': flag}}).exec()
+  }
+}
+
+function getQuery (name, flag) {
+  if (flag) { // 判断是否查询审核中的全部视频
+    return name ? {'name': new RegExp(name)} : {}
+  } else {
+    return name ? {'name': new RegExp(name), 'shenhe': 'ing'} : {'shenhe': 'ing'}
   }
 }
 

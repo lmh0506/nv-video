@@ -1,10 +1,19 @@
 <template>
   <div class="base-video-wrapper">
     <div class="base-video-main">
-      <div class="base-video-img-wrapper">
-        <img :src="video.img" alt="" class="base-video-img">
-      </div>
-      <p class="base-video-title">{{video.name}}</p>
+      <template v-if="videoRouter">
+        <router-link tag="div" :to="{name: 'videoDetail', params: {id: video._id}}" class="base-video-img-wrapper">
+          <img :src="video.img" alt="" class="base-video-img">
+        </router-link>
+        <router-link tag="p" :to="{name: 'videoDetail', params: {id: video._id}}" class="base-video-title">{{video.name}}</router-link>
+      </template>
+      <template v-else>
+        <div class="base-video-img-wrapper">
+          <img :src="video.img" alt="" class="base-video-img">
+        </div>
+        <p class="base-video-title">{{video.name}}</p>
+      </template>
+      
       <p class="base-video-bottom">
         <span class="base-video-playnum">
           <i class="el-icon-my-bofang1"></i>
@@ -29,6 +38,10 @@
       edit: {
         type: Boolean,
         default: true
+      },
+      videoRouter: {
+        type: Boolean,
+        default: false
       }
     },
     data () {
