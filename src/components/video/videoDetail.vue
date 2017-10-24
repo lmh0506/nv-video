@@ -454,6 +454,10 @@
               .reply-left{
                 padding: 5px;
                 float: left;
+
+                img {
+                  border-radius: 50%;
+                }
               }
 
               .reply-right{
