@@ -16,7 +16,7 @@
         <el-row>
           <el-col :span="4" v-for="(v, index) in videoList" :key="index">
             <div class="grid-content">
-              <base-video @deleteVideo="deleteVideo($event, index, videoList)"            :video='v' 
+              <base-video @deleteVideo="deleteVideo($event, index, true)"            :video='v' 
                         :edit="edit"
                         :videoRouter="true"></base-video>
             </div>
@@ -38,7 +38,7 @@
       <el-row v-if="ingList.length > 0">
         <el-col :span="4" v-for="(v, index) in ingList" :key="index">
           <div class="grid-content">
-            <base-video @deleteVideo="deleteVideo($event, index, ingList)"                  :video='v' 
+            <base-video @deleteVideo="deleteVideo($event, index, false)"                  :video='v' 
                         :edit="edit"></base-video>
           </div>
         </el-col>
@@ -49,7 +49,7 @@
       <el-row v-if="noPassList.length > 0">
         <el-col :span="4" v-for="(v, index) in noPassList" :key="index">
           <div class="grid-content">
-            <base-video @deleteVideo="deleteVideo($event, index, noPassList)" :video='v' :edit="edit"></base-video>
+            <base-video @deleteVideo="deleteVideo($event, index, false)" :video='v' :edit="edit"></base-video>
           </div>
         </el-col>
       </el-row>
@@ -102,6 +102,8 @@
         })
       },
       normalizeList (list) { // 格式化视频列表
+        this.ingList = []
+        this.noPassList = []
         list.forEach(v => {
           if (v.shenhe === 'ing') {
             this.ingList.push(v)
@@ -110,7 +112,7 @@
           }
         })
       },
-      deleteVideo (id, index, list) {
+      deleteVideo (id, index, isPass) {
         this.$confirm('此操作将永久删除该视频, 请谨慎操作?', '警告', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
@@ -119,7 +121,11 @@
           deleteVideo(id).then(res => {
             if (res.data.error === ERR_OK) {
               this.$message.success('删除成功')
-              this.getPassList()
+              if (isPass) {
+                this.getPassList()
+              } else {
+                this.getUserVideoList()
+              }
             } else if (res.data.error === NO_LOGIN) {
               this.$router.push('/login')
             } else {

@@ -104,6 +104,13 @@ VideoSchema.statics = {
         path: 'type',
         select: 'name'
       })
+      .populate({
+        path: 'comment',
+        populate: {
+          path: 'from_user reply.from_user reply.to_user',
+          select: 'name avatar'
+        }
+      })
       .exec()
   },
   playNumUp (id) {
@@ -112,6 +119,15 @@ VideoSchema.statics = {
   storeNumChange (id, flag) {
     flag = flag ? 1 : -1
     return this.update({'_id': id}, {$inc: {'fav_num': flag}}).exec()
+  },
+  addRate (id, rate) {
+    return this.update({'_id': id}, {$push: {'score': rate}}).exec()
+  },
+  addComment (vid, cid) {
+    return this.update({'_id': vid}, {$push: {'comment': cid}}).exec()
+  },
+  removeComment (vid, cid) {
+    return this.update({'_id': vid}, {$pull: {'comment': cid}}).exec()
   }
 }
 

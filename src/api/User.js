@@ -50,8 +50,8 @@ export const getUser = id => {
   return axios.get('/api/user/getUser', {params: {id}})
 }
 
-export const getIsStore = (uid, vid) => {
-  return axios.get('/api/user/video/isStore', {params: {uid, vid}})
+export const getIsStoreAndRate = (uid, vid) => {
+  return axios.get('/api/user/video/isStoreAndRate', {params: {uid, vid}})
 }
 
 export const getStoreList = (id, page, pageSize) => {

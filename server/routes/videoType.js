@@ -92,6 +92,7 @@ router.post('/delete', async (ctx, next) => {
       file.deleteFile(video.img)
 
       await User.removeUploadVideo(video.publisher, v)
+      await User.removeStoreVideo(video.publisher, v)
     })
 
     // 删除类型

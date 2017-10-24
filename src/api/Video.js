@@ -35,3 +35,7 @@ export const playNumUp = id => {
 export const storeVideo = (vid, uid) => {
   return axios.post('/api/video/storeVideo', {vid, uid})
 }
+
+export const submitRate = (vid, uid, rate) => {
+  return axios.post('/api/video/submitRate', {vid, uid, rate})
+}

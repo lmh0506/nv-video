@@ -41,6 +41,11 @@ router.get('/getVideo', async (ctx, next) => {
 
   try {
     let video = await Video.findVideo(id)
+    let score = 0
+    video.score.forEach(item => {
+      score += item.rate
+    })
+    video._doc.score = (score / video.score.length).toFixed(1)
     body.result = video
   } catch (err) {
     console.log(err)
@@ -151,6 +156,7 @@ router.post('/delete', async (ctx, next) => {
     file.deleteFile(video.img)
 
     await User.removeUploadVideo(video.publisher, id)
+    await User.removeStoreVideo(video.publisher, id)
     await VideoType.deleteVideo(video.type, id)
   } catch (err) {
     console.log(err)
@@ -184,6 +190,27 @@ router.post('/storeVideo', async (ctx, next) => {
     body.error = 1
   }
 
+  ctx.body = body
+})
+
+// 评价视频
+router.post('/submitRate', async (ctx, next) => {
+  let {uid, vid, rate} = ctx.request.body
+  let body = {
+    error: 0,
+    msg: ''
+  }
+
+  try {
+    let userRate = {
+      user_id: uid,
+      rate: rate
+    }
+    await Video.addRate(vid, userRate)
+  } catch (err) {
+    console.log(err)
+    body.error = 1
+  }
   ctx.body = body
 })
 

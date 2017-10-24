@@ -399,7 +399,7 @@ router.get('/video/storeList', async (ctx, next) => {
 })
 
 // 判断用户是否已收藏
-router.get('/video/isStore', async (ctx, next) => {
+router.get('/video/isStoreAndRate', async (ctx, next) => {
   let {uid, vid} = ctx.request.query
   let body = {
     error: 0,
@@ -408,11 +408,17 @@ router.get('/video/isStore', async (ctx, next) => {
 
   try {
     let user = await User.findStoreVideo(uid, vid)
-    if (user) {
-      body.result = true
+    if (user) { // 返回用户是否收藏
+      body.store = true
     } else {
-      body.result = false
+      body.store = false
     }
+    let video = await Video.findById(vid).exec()
+    video.score.forEach(item => {
+      if (item.user_id == uid) { // 获取当前用户的评价
+        body.rate = item.rate
+      }
+    })
   } catch (err) {
     console.log(err)
     body.error = 1
