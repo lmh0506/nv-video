@@ -24,7 +24,7 @@ export const deleteVideo = id => {
   return axios.post('/api/video/delete', {id})
 }
 
-export const getVideo = id => {
+export const getVideo = (id) => {
   return axios.get('/api/video/getVideo', {params: {id}})
 }
 

@@ -104,13 +104,6 @@ VideoSchema.statics = {
         path: 'type',
         select: 'name'
       })
-      .populate({
-        path: 'comment',
-        populate: {
-          path: 'from_user reply.from_user reply.to_user',
-          select: 'name avatar'
-        }
-      })
       .exec()
   },
   playNumUp (id) {

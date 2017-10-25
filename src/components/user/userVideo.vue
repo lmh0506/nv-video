@@ -9,7 +9,7 @@
             @click="changeTitle(index)">
         {{item}}
       </span>
-      <el-button type="text" @click="editVideo">{{editMsg}}<i class="el-icon-edit"></i></el-button>
+      <el-button v-if="isVisiter" type="text" @click="editVideo">{{editMsg}}<i class="el-icon-edit"></i></el-button>
     </h3>
     <div class="my-video-wrapper" v-if="activeTitle === 0">
       <template v-if="videoList.length > 0">
@@ -22,7 +22,7 @@
             </div>
           </el-col>
         </el-row>
-        <div class="block">
+        <div class="block" v-if="total > pageSize">
           <el-pagination
             @current-change="handleCurrentChange"
             :current-page.sync="currentPage"
@@ -62,12 +62,12 @@
   import baseVideo from '@/base/baseVideo'
   import {getUserVideoList, deleteVideo} from '@/api/Video'
   import {ERR_OK, NO_LOGIN} from '@/config/index'
+  import {mapState} from 'vuex'
 
   export default {
     data () {
       return {
         activeTitle: 0,
-        titleArr: ['我的视频', '审核中', '审核未通过'],
         videoList: [],
         ingList: [],
         noPassList: [],
@@ -76,6 +76,17 @@
         pageSize: 24, // 每页显示数目
         total: 0, // 总数
         currentPage: 1 // 当前页码
+      }
+    },
+    computed: {
+      ...mapState([
+        'user'
+      ]),
+      isVisiter () {
+        return this.user.id === this.$route.params.id
+      },
+      titleArr () {
+        return this.isVisiter ? ['我的视频', '审核中', '审核未通过'] : ['我的视频']
       }
     },
     methods: {

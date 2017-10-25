@@ -92,8 +92,9 @@ UserSchema.statics = {
   findStoreVideo (uid, vid) { // 查找收藏列表中是否存在某视频
     return this.findOne({'_id': uid, 'storeVideo': vid})
   },
-  findAllStore (id) { // 获取收藏列表
-    return this.findOne({'_id': id})
+  findAllStore (id, page, pageSize) { // 获取收藏列表
+    const skip = (page - 1) * pageSize
+    return this.findOne({'_id': id}, {'storeVideo': {$slice: [skip, pageSize]}})
       .populate({
         path: 'storeVideo',
         select: 'name src img fav_num vplaynum shenhe'

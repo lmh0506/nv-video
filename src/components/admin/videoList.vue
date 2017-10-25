@@ -66,7 +66,7 @@
           </template>
         </el-table-column>
       </el-table>
-      <div class="block">
+      <div class="block" v-if="total > pageSize">
         <el-pagination
           @current-change="handleCurrentChange"
           :current-page.sync="currentPage"

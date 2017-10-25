@@ -2,9 +2,9 @@
   <div class="user-wrapper">
     <div class="user-banner">
       <div class="user-info">
-        <img  class="user-avatar" :src="user.avatar" alt="" width="100" height="100">
+        <img  class="user-avatar" :src="owner.avatar" alt="" width="100" height="100">
         <div class="user-name">
-          {{user.name}}
+          {{owner.name}}
         </div>
       </div>
     </div>
@@ -12,7 +12,7 @@
       <el-menu-item :index="routerIndex(0)">主页</el-menu-item>
       <el-menu-item :index="routerIndex(1)">视频</el-menu-item>
       <el-menu-item :index="routerIndex(2)">收藏夹</el-menu-item>
-      <el-menu-item :index="routerIndex(3)">设置</el-menu-item>
+      <el-menu-item :index="routerIndex(3)" v-if="isVisiter">设置</el-menu-item>
     </el-menu>
     <router-view></router-view>
   </div>
@@ -26,12 +26,16 @@
   export default {
     data () {
       return {
-        router: true
+        router: true,
+        owner: {}
       }
     },
     computed: {
       activeRoute () {
         return this.$route.path
+      },
+      isVisiter () {
+        return this.user.id === this.$route.params.id
       },
       ...mapState([
         'user'
@@ -48,10 +52,27 @@
         }
       }
     },
+    watch: {
+      '$route' (to, from) {
+        if (to.params.id !== from.params.id) {
+          checkExist({'id': to.params.id}).then(res => {
+            if (res.data.error === 10001) {
+              this.owner = res.data.result
+            } else if (res.data.error === NO_LOGIN) {
+              this.$router.push('/login')
+            } else {
+              this.$router.push('/404')
+            }
+          })
+        }
+      }
+    },
     beforeRouteEnter (to, from, next) {
       checkExist({'id': to.params.id}).then(res => {
         if (res.data.error === 10001) {
-          next()
+          next(vm => {
+            vm.owner = res.data.result
+          })
         } else if (res.data.error === NO_LOGIN) {
           next('/login')
         } else {

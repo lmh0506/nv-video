@@ -38,6 +38,11 @@ router.post('/exist', async (ctx, next) => {
     if (user) {
       // 已存在
       body.error = 10001
+
+      if (id) {
+        let {id, avatar, name} = user
+        body.result = {id, avatar, name}
+      }
     }
 
     if (id && !ctx.session.user) { // 通过id进行查找用户时  如果未登录则无法查询
@@ -379,17 +384,16 @@ router.get('/video/storeList', async (ctx, next) => {
 
   page = page | 0
   pageSize = pageSize | 0
-  const skip = (page - 1) * pageSize
 
   try {
-    let user = await User.findAllStore(id)
-    body.total = user.storeVideo.length
+    let user = await User.findAllStore(id, page, pageSize)
     if (user) {
-      let list = user.storeVideo
-      body.result = list.slice(skip, skip + pageSize)
+      body.result = user.storeVideo
     } else {
       body.result = []
     }
+    user = await User.findById(id).exec()
+    body.total = user.storeVideo.length
   } catch (err) {
     console.log(err)
     body.error = 1

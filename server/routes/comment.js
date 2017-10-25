@@ -6,6 +6,28 @@ require('../util/time')
 
 router.prefix('/api/comment')
 
+router.get('/list', async (ctx, next) => {
+  let {vid, page, pageSize, replySize} = ctx.request.query
+  let body = {
+    error: 0,
+    msg: ''
+  }
+
+  page = page | 0
+  pageSize = pageSize | 0
+  replySize = replySize | 0
+
+  try {
+    let list = await Comment.findAll(vid, page, pageSize, replySize)
+
+    body.result = list
+  } catch (err) {
+    console.log(err)
+    body.error = 1
+  }
+  ctx.body = body
+})
+
 router.use(middleware.loginIntercept)
 
 router.post('/submit', async (ctx, next) => {
@@ -20,11 +42,13 @@ router.post('/submit', async (ctx, next) => {
     let comment = new Comment({
       from_user,
       createTime,
-      content
+      content,
+      vid
     })
     comment = await comment.save()
     await Video.addComment(vid, comment.id)
     body.result = createTime
+    body.id = comment.id
   } catch (err) {
     console.log(err)
     body.error = 1
@@ -52,6 +76,30 @@ router.post('/reply', async (ctx, next) => {
     }
     body.result = createTime
     await Comment.addReply(cid, reply)
+  } catch (err) {
+    console.log(err)
+    body.error = 1
+  }
+
+  ctx.body = body
+})
+
+router.get('/replyList', async (ctx, next) => {
+  let {id, page, pageSize} = ctx.request.query
+  let body = {
+    error: 0,
+    msg: ''
+  }
+
+  page = page | 0
+  pageSize = pageSize | 0
+
+  try {
+    let list = await Comment.findReplyList(id, page, pageSize)
+    let comment = await Comment.findById(id).exec()
+    console.log(list)
+    body.result = list
+    body.total = comment.reply.length
   } catch (err) {
     console.log(err)
     body.error = 1

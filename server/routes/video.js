@@ -42,10 +42,15 @@ router.get('/getVideo', async (ctx, next) => {
   try {
     let video = await Video.findVideo(id)
     let score = 0
-    video.score.forEach(item => {
-      score += item.rate
-    })
-    video._doc.score = (score / video.score.length).toFixed(1)
+    if (video.score.length > 0) {
+      video.score.forEach(item => {
+        score += item.rate
+      })
+      score = (score / video.score.length).toFixed(1)
+    }
+
+    video._doc.score = score
+    video._doc.comment = video.comment.length
     body.result = video
   } catch (err) {
     console.log(err)

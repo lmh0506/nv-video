@@ -2,7 +2,7 @@
   <div class="userStore-wrapper">
     <h3 class="my-store-title">
       我的收藏
-      <el-button class="edit-btn" type="text" @click="editVideo">{{editMsg}}<i class="el-icon-edit"></i></el-button>
+      <el-button v-if="isVisiter" class="edit-btn" type="text" @click="editVideo">{{editMsg}}<i class="el-icon-edit"></i></el-button>
     </h3>
     <div class="my-video-wrapper">
       <template v-if="storeList.length > 0">
@@ -15,7 +15,7 @@
             </div>
           </el-col>
         </el-row>
-        <div class="block">
+        <div class="block" v-if="total > pageSize">
           <el-pagination
             @current-change="handleCurrentChange"
             :current-page.sync="currentPage"
@@ -34,6 +34,7 @@
   import {ERR_OK, NO_LOGIN} from '@/config/index'
   import {getStoreList, deleteStoreVideo} from '@/api/User'
   import baseVideo from '@/base/baseVideo'
+  import {mapState} from 'vuex'
 
   export default {
     data () {
@@ -44,6 +45,14 @@
         currentPage: 1,
         total: 0,
         edit: false
+      }
+    },
+    computed: {
+      ...mapState([
+        'user'
+      ]),
+      isVisiter () {
+        return this.user.id === this.$route.params.id
       }
     },
     methods: {

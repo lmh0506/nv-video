@@ -64,12 +64,12 @@
       <div class="comment-list" v-if="commentList.length > 0">
         <div class="comment-wrapper" v-for="(comment, cindex) in commentList" :key="cindex">
           <div class="comment-left">
-            <img :src="comment.from_user.avatar" width="86" height="86" alt="">
+            <router-link tag="img" :to="{name: 'userIndex', params: {id: comment.from_user._id}}" :src="comment.from_user.avatar" width="86" height="86" alt=""></router-link>
           </div>
           <div class="comment-right">
-            <h4 class="comment-userName">
+            <router-link tag="h4" :to="{name: 'userIndex', params: {id: comment.from_user._id}}" class="comment-userName">
               {{comment.from_user.name}}
-            </h4>
+            </router-link>
             <p class="comment-content">
               {{comment.content}}
             </p>
@@ -77,21 +77,13 @@
               {{comment.createTime}}
               <el-button type="text" class="replyBtn" @click="showReply(cindex)">回复</el-button>
             </p>
-            <div class="reply-wrapper" v-for="(reply, rindex) in comment.reply" :key="rindex">
-              <div class="reply-left">
-                <img :src="reply.from_user.avatar" width="24" height="24" alt="">
-              </div>
-              <div class="reply-right">
-                <h6 class="reply-right-head">
-                  <span class="reply-userName">{{reply.from_user.name}}{{reply.to_user && (reply.to_user._id != reply.from_user._id) ?  `回复 @ ${reply.to_user.name}:` : ''}}</span>
-                  <span class="reply-content">{{reply.content}}</span>
-                </h6>
-                <p class="reply-createTime">
-                  {{reply.createTime}}
-                  <el-button type="text" class="replyBtn" @click="showReply(cindex, reply.from_user)">回复</el-button>
-                </p>
-              </div>
-            </div>
+            <reply-list :comment="comment" 
+                    :cindex="cindex" 
+                    :replySize="replySize"
+                    @pageChange="pageChange"
+                    @changeReply="changeReply"
+                    @showReply="showReply"
+                    ref="replyList"></reply-list>
             <div class="reply-form" v-show="replyFormShow === cindex">
               <el-form :inline="true" :model="replyForm" ref="replyForm" :rules="rules" class="demo-form-inline">
                 <el-form-item prop="comment">
@@ -104,16 +96,25 @@
                   </el-input>
                 </el-form-item>
                 <el-form-item>
-                  <el-button class="submit-btn" type="primary" @click="submitReply(comment._id)">发表评论</el-button>
+                  <el-button class="submit-btn" type="primary" @click="submitReply(comment._id, cindex)">发表评论</el-button>
                 </el-form-item>
               </el-form>
             </div>
           </div>
         </div>
       </div>
-      <div class="no-comment" v-else>
+      <div class="no-comment" v-if="commentList.length === 0">
         目前还没有人评论该视频
       </div>
+      <div class="pagination-wrapper" v-if="total > pageSize">
+        <el-pagination
+          @current-change="handleCurrentChange"
+          :current-page.sync="currentPage"
+          :page-size="pageSize"
+          layout="prev, pager, next"
+          :total="total">
+        </el-pagination>
+      </div>  
       <div class="comment-form">
         <el-form :inline="true" :model="commentForm" ref="commentForm" :rules="rules" class="demo-form-inline">
           <el-form-item prop="comment">
@@ -137,10 +138,11 @@
 <script>
   import {getVideo, playNumUp, storeVideo, submitRate} from '@/api/Video'
   import {getIsStoreAndRate} from '@/api/User'
-  import {submitComment, submitReply} from '@/api/Comment'
+  import {submitComment, getCommentList, submitReply} from '@/api/Comment'
   import {ERR_OK, NO_LOGIN} from '@/config/index'
   import VueDPlayer from 'vue-dplayer'
   import {mapState} from 'vuex'
+  import baseReplyList from '@/base/baseReplyList'
 
   export default {
     data () {
@@ -164,7 +166,11 @@
         },
         commentList: [],
         replyFormShow: -1,
-        toUser: null // 存储回复的用户
+        toUser: null, // 存储回复的用户
+        total: 0, // 评论总条数
+        currentPage: 1,
+        pageSize: 3,
+        replySize: 1 // 起始显示回复数量
       }
     },
     computed: {
@@ -202,10 +208,18 @@
                 link: `/user/${this.video.publisher._id}`
               }
             ]
-            this.commentList = res.data.result.comment
+            this.total = res.data.result.comment
+            this.getCommentList(this.video._id)
             if (this.user.id) { // 如果用户已登录 获取他的收藏信息
               this.getIsStoreAndRate()
             }
+          }
+        })
+      },
+      getCommentList (vid) { // 获取评论列表
+        getCommentList(vid, this.currentPage, this.pageSize, this.replySize).then(res => {
+          if (res.data.error === ERR_OK) {
+            this.commentList = res.data.result
           }
         })
       },
@@ -265,12 +279,9 @@
           if (valid) {
             submitComment(uid, this.commentForm.comment, vid).then(res => {
               if (res.data.error === ERR_OK) {
-                // 动态更新数据 不向后台获取 减轻服务器压力
-                this.commentList.push({
-                  'from_user': this.user,
-                  'content': this.commentForm.comment,
-                  'createTime': res.data.result
-                })
+                // 发表成功 评论总数增加
+                this.total ++
+                this.getCommentList(this.video._id)
                 this.commentForm.comment = ''
               } else if (res.data.error === NO_LOGIN) {
                 this.$router.push('/login')
@@ -281,12 +292,20 @@
           }
         })
       },
+      handleCurrentChange (page) {
+        this.currentPage = page
+        this.replyFormShow = -1
+        this.getCommentList(this.video._id)
+      },
+      changeReply (list, index) { // 更新回复列表
+        this.commentList[index].reply = list
+      },
       showReply (cindex, toUser) { // 显示回复框
         this.replyFormShow = cindex
         this.toUser = toUser // 更新回复对象
         this.replyForm.comment = '' // 清空回复内容
       },
-      submitReply (cid) { // 提交回复
+      submitReply (cid, cindex) { // 提交回复
         let uid = this.user.id
         let toUser = this.toUser ? this.toUser._id : ''
 
@@ -294,13 +313,7 @@
           if (valid) {
             submitReply(uid, this.replyForm.comment, cid, toUser).then(res => {
               if (res.data.error === ERR_OK) {
-                // 动态更新数据 不向后台获取 减轻服务器压力
-                this.commentList[this.replyFormShow].reply.push({
-                  'from_user': this.user,
-                  'to_user': this.toUser,
-                  'content': this.replyForm.comment,
-                  'createTime': res.data.result
-                })
+                this.$refs.replyList[cindex].getReplyList()
                 this.replyForm.comment = ''
               } else if (res.data.error === NO_LOGIN) {
                 this.$router.push('/login')
@@ -310,10 +323,14 @@
             return false
           }
         })
+      },
+      pageChange (index) {
+        this.replyFormShow = index
       }
     },
     components: {
-      'd-player': VueDPlayer
+      'd-player': VueDPlayer,
+      'reply-list': baseReplyList
     },
     mounted () {
       this.getVideo()
@@ -426,6 +443,7 @@
             box-sizing: border-box;
             img {
               border-radius: 50%;
+              cursor: pointer;
             }
           }
           .comment-right {
@@ -433,42 +451,20 @@
             width: calc(100% - 120px);
             float: left;
 
-            .comment-userName, .reply-userName {
+            .comment-userName{
               color: #6d757a;
               margin-top: 10px;
               margin-bottom: 10px;
+              cursor: pointer;
             }
 
-            .comment-content, .reply-content {
+            .comment-content{
               color: #333;
               line-height: 1.5;
             }
 
-            .comment-createTime, .reply-createTime {
+            .comment-createTime{
               color: #99a2aa;
-            }
-
-            .reply-wrapper{
-              overflow: hidden;
-
-              .reply-left{
-                padding: 5px;
-                float: left;
-
-                img {
-                  border-radius: 50%;
-                }
-              }
-
-              .reply-right{
-                width: calc(100% - 54px);
-                margin-left: 20px;
-                float: left;
-
-                .reply-content{
-                  margin-left: 20px;
-                }
-              }
             }
           }
           .reply-form{
@@ -499,6 +495,10 @@
         font-size: 20px;
         text-align: center;
         line-height: 100px;
+      }
+
+      .pagination-wrapper{
+        text-align: center;
       }
 
       .comment-form {
