@@ -57,6 +57,9 @@ commentSchema.statics = {
       select: 'name avatar'
     })
     .exec()
+  },
+  deleteByVid (vid) {
+    return this.remove({vid}).exec()
   }
 }
 

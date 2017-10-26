@@ -39,3 +39,7 @@ export const storeVideo = (vid, uid) => {
 export const submitRate = (vid, uid, rate) => {
   return axios.post('/api/video/submitRate', {vid, uid, rate})
 }
+
+export const getHotList = () => {
+  return axios.get('/api/video/hotList')
+}

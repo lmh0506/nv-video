@@ -448,6 +448,23 @@ router.post('/video/removeStore', async (ctx, next) => {
   ctx.body = body
 })
 
+router.get('/video/myHotVideo', async (ctx, next) => {
+  let {id} = ctx.request.query
+  let body = {
+    error: 0,
+    msg: ''
+  }
+
+  try {
+    let list = await User.findHotVideo(id)
+    body.result = list
+  } catch (err) {
+    console.log(err)
+    body.error = 1
+  }
+  ctx.body = body
+})
+
 module.exports = router
 
 function randomNum (min, max) {

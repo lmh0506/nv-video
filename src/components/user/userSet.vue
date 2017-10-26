@@ -160,13 +160,17 @@
     methods: {
       getUser () { // 获取用户数据
         if (this.user.id) {
-          getUser(this.user.id).then(res => {
-            if (res.data.error === ERR_OK) {
-              this.userForm = res.data.result
-            } else if (res.data.error === NO_LOGIN) {
-              this.$router.push('/login')
-            }
-          })
+          if (this.user.id === this.$route.params.id) {
+            getUser(this.user.id).then(res => {
+              if (res.data.error === ERR_OK) {
+                this.userForm = res.data.result
+              } else if (res.data.error === NO_LOGIN) {
+                this.$router.push('/login')
+              }
+            })
+          } else { // 不是本人就跳转到404界面
+            this.$router.push('/404')
+          }
         }
       },
       getTypeList () {
@@ -277,6 +281,7 @@
           this.$refs.videoImg.clearFiles()
           this.$refs.videoUpload.clearFiles()
           this.$refs.videoForm.resetFields()
+          this.videoImg = ''
         } else if (res.error === NO_LOGIN) {
           this.$router.push('/')
         } else {

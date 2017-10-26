@@ -19,3 +19,7 @@ export const deleteType = id => {
 export const updateType = (id, name) => {
   return axios.post('/api/video/type/update', {id, name})
 }
+
+export const getHotTypeList = () => {
+  return axios.get('/api/video/type/hotList')
+}

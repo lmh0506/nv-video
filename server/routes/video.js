@@ -2,10 +2,28 @@ const router = require('koa-router')()
 const Video = require('../models/video')
 const VideoType = require('../models/videoType')
 const User = require('../models/user')
+const Comment = require('../models/comment')
 const middleware = require('./middleware')
 const file = require('../util/file')
 
 router.prefix('/api/video')
+
+router.get('/hotList', async (ctx, next) => {
+  let body = {
+    error: 0,
+    msg: ''
+  }
+
+  try {
+    let list = await Video.findHotVideo()
+    body.result = list
+  } catch (err) {
+    console.log(err)
+    body.error = 1
+  }
+
+  ctx.body = body
+})
 
 // 获取视频列表
 router.get('/videoList', async (ctx, next) => {
@@ -160,6 +178,7 @@ router.post('/delete', async (ctx, next) => {
     file.deleteFile(video.src)
     file.deleteFile(video.img)
 
+    await Comment.deleteByVid(id)
     await User.removeUploadVideo(video.publisher, id)
     await User.removeStoreVideo(video.publisher, id)
     await VideoType.deleteVideo(video.type, id)

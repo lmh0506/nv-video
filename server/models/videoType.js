@@ -26,6 +26,15 @@ VideoTypeSchema.statics = {
   },
   deleteVideo (id, vid) {
     return this.update({'_id': id}, {$pull: {'videos': vid}}).exec()
+  },
+  findHotList () {
+    return this.find({}, {})
+      .populate({
+        path: 'videos',
+        select: 'name img fav_num vplaynum shenhe',
+        options: {limit: 12}
+      })
+      .exec()
   }
 }
 

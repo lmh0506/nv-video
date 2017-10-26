@@ -97,7 +97,7 @@ router.get('/replyList', async (ctx, next) => {
   try {
     let list = await Comment.findReplyList(id, page, pageSize)
     let comment = await Comment.findById(id).exec()
-    console.log(list)
+
     body.result = list
     body.total = comment.reply.length
   } catch (err) {

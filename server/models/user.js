@@ -100,6 +100,20 @@ UserSchema.statics = {
         select: 'name src img fav_num vplaynum shenhe'
       })
       .exec()
+  },
+  findHotVideo (id) {
+    return this.findOne({'_id': id}, {uploadVideo: 1, storeVideo: 1})
+      .populate({
+        path: 'uploadVideo',
+        select: 'name img fav_num vplaynum shenhe',
+        options: {limit: 12, sort: {fav_num: -1, vplaynum: -1}}
+      })
+      .populate({
+        path: 'storeVideo',
+        select: 'name img fav_num vplaynum shenhe',
+        options: {limit: 12, sort: {fav_num: -1, vplaynum: -1}}
+      })
+      .exec()
   }
 }
 

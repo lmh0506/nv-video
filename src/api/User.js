@@ -61,3 +61,7 @@ export const getStoreList = (id, page, pageSize) => {
 export const deleteStoreVideo = (uid, vid) => {
   return axios.post('/api/user/video/removeStore', {uid, vid})
 }
+
+export const getMyHotVideo = (id) => {
+  return axios.get('/api/user/video/myHotVideo', {params: {id}})
+}

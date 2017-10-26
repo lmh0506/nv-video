@@ -121,6 +121,12 @@ VideoSchema.statics = {
   },
   removeComment (vid, cid) {
     return this.update({'_id': vid}, {$pull: {'comment': cid}}).exec()
+  },
+  findHotVideo () {
+    return this.find({}, {img: 1, name: 1})
+      .sort({'fav_num': -1, 'vplaynum': -1, 'comment.length': -1})
+      .limit(5)
+      .exec()
   }
 }
 
