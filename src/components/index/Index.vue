@@ -5,6 +5,15 @@
         <router-link tag="img" :to="{name: 'videoDetail', params: {id: item._id}}" :src="item.img" width="100%" height="100%" alt=""></router-link>
       </el-carousel-item>
     </el-carousel>
+    <div class="search-wrapper">
+      <el-form>
+        <el-form-item>
+          <el-input placeholder="请输入视频名称" v-model="searchKey">
+            <el-button slot="append" icon="el-icon-search" @click="search"></el-button>
+          </el-input>
+        </el-form-item>
+      </el-form>
+    </div>
     <div class="video-list">
       <div class="videoType-wrapper" v-for="(item, index) in hotTypeList" :key="index">
         <div v-if="item.videos.length > 0" :id="'videoType_' + index">
@@ -24,7 +33,6 @@
         </div>
       </div>
       <div class="type-list">
-        
         <div v-for="(item, index) in hotTypeList" :key="index">
           <div class="type-wrapper" v-if="item.videos.length > 0" v-scroll-to="'#videoType_' + index">
             {{item.name}}
@@ -46,7 +54,8 @@
     data () {
       return {
         hotList: [],
-        hotTypeList: []
+        hotTypeList: [],
+        searchKey: ''
       }
     },
     methods: {
@@ -61,14 +70,13 @@
         getHotTypeList().then(res => {
           if (res.data.error === ERR_OK) {
             this.hotTypeList = res.data.result
-
-            for (let i = 0; i < 3; i++) {
-              this.hotTypeList.forEach(item => {
-                item.videos = item.videos.concat(item.videos)
-              })
-            }
           }
         })
+      },
+      search () {
+        if (this.searchKey) {
+          this.$router.push({'name': 'search', 'query': {key: this.searchKey}})
+        }
       }
     },
     components: {
@@ -89,6 +97,15 @@
 
     .carousel {
       margin: 30px 0;
+    }
+
+    .search-wrapper {
+      width: 500px;
+      margin: 15px auto 0;
+
+      .search-select{
+        width: 100px;
+      }
     }
 
     .video-list {

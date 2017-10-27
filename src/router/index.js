@@ -17,6 +17,7 @@ import userVideo from '@/components/user/userVideo'
 import userStore from '@/components/user/userStore'
 import userSet from '@/components/user/userSet'
 import videoDetail from '@/components/video/videoDetail'
+import search from '@/components/search/search'
 
 Vue.use(Router)
 
@@ -73,6 +74,11 @@ export default new Router({
       path: '/forgetPwd',
       name: 'forgetPwd',
       component: forgetPwd
+    },
+    {
+      path: '/search',
+      name: 'search',
+      component: search
     },
     {
       path: '/admin',
