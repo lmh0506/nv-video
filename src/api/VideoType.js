@@ -23,3 +23,7 @@ export const updateType = (id, name) => {
 export const getHotTypeList = () => {
   return axios.get('/api/video/type/hotList')
 }
+
+export const getDetailList = (id, sort, page, pageSize) => {
+  return axios.get('/api/video/type/detail', {params: {id, sort, page, pageSize}})
+}

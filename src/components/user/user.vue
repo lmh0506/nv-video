@@ -9,10 +9,30 @@
       </div>
     </div>
     <el-menu :default-active="activeRoute" class="el-menu-demo" mode="horizontal" :router = "router" >
-      <el-menu-item :index="routerIndex(0)">主页</el-menu-item>
-      <el-menu-item :index="routerIndex(1)">视频</el-menu-item>
-      <el-menu-item :index="routerIndex(2)">收藏夹</el-menu-item>
-      <el-menu-item :index="routerIndex(3)" v-if="isVisiter">设置</el-menu-item>
+      <el-menu-item :index="routerIndex(0)">
+        <svg class="icon" aria-hidden="true">
+            <use xlink:href="#icon-zhuye"></use>
+        </svg>
+        主页
+      </el-menu-item>
+      <el-menu-item :index="routerIndex(1)">
+        <svg class="icon" aria-hidden="true">
+            <use xlink:href="#icon-bofang"></use>
+        </svg>
+        视频
+      </el-menu-item>
+      <el-menu-item :index="routerIndex(2)">
+        <svg class="icon" aria-hidden="true">
+            <use xlink:href="#icon-shoucang1"></use>
+        </svg>
+        收藏夹
+      </el-menu-item>
+      <el-menu-item :index="routerIndex(3)" v-if="isVisiter">
+        <svg class="icon" aria-hidden="true">
+            <use xlink:href="#icon-shezhi"></use>
+        </svg>
+        设置
+      </el-menu-item>
     </el-menu>
     <router-view></router-view>
   </div>

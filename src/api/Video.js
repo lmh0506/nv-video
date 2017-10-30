@@ -43,3 +43,7 @@ export const submitRate = (vid, uid, rate) => {
 export const getHotList = () => {
   return axios.get('/api/video/hotList')
 }
+
+export const getRankList = () => {
+  return axios.get('/api/video/rankList')
+}

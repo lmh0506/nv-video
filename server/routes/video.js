@@ -59,15 +59,6 @@ router.get('/getVideo', async (ctx, next) => {
 
   try {
     let video = await Video.findVideo(id)
-    let score = 0
-    if (video.score.length > 0) {
-      video.score.forEach(item => {
-        score += item.rate
-      })
-      score = (score / video.score.length).toFixed(1)
-    }
-
-    video._doc.score = score
     video._doc.comment = video.comment.length
     body.result = video
   } catch (err) {
@@ -88,6 +79,28 @@ router.post('/playNumUp', async (ctx, next) => {
 
   try {
     await Video.playNumUp(id)
+  } catch (err) {
+    console.log(err)
+    body.error = 1
+  }
+  ctx.body = body
+})
+
+router.get('/rankList', async (ctx, next) => {
+  let body = {
+    error: 0,
+    msg: ''
+  }
+
+  try {
+    let list = []
+    let playList = await Video.findVideoRank('play')
+    let favList = await Video.findVideoRank('fav')
+    let scoreList = await Video.findVideoRank('rate')
+    list.push(playList)
+    list.push(favList)
+    list.push(scoreList)
+    body.result = list
   } catch (err) {
     console.log(err)
     body.error = 1
@@ -230,7 +243,16 @@ router.post('/submitRate', async (ctx, next) => {
       user_id: uid,
       rate: rate
     }
-    await Video.addRate(vid, userRate)
+    // let v = await Video.addRate(vid, userRate)
+    let v = await Video.findById(vid).exec()
+    v.score.push(userRate)
+    let score = 0
+    v.score.forEach(item => {
+      score += item.rate
+    })
+    score = (score / v.score.length).toFixed(1)
+    v._doc.rate = score
+    v.save()
   } catch (err) {
     console.log(err)
     body.error = 1

@@ -12,16 +12,22 @@
         </p>
         <p class="videoDetail-playInfo">
           <span class="videoDetail-playnum">
-            <i class="el-icon-my-bofang1"></i>
+            <svg class="icon" aria-hidden="true">
+              <use xlink:href="#icon-bofang1"></use>
+            </svg>
             {{video.vplaynum}}
           </span>
           <span class="videoDetail-favnum">
-            <i class="el-icon-my-shoucang"></i>
+            <svg class="icon" aria-hidden="true">
+              <use xlink:href="#icon-shoucang"></use>
+            </svg>
             {{video.fav_num}}
           </span>
           <span class="videoDetail-score">
-            <i class="el-icon-my-pingfen1"></i>
-            {{video.score}}
+            <svg class="icon" aria-hidden="true">
+              <use xlink:href="#icon-pingfen1"></use>
+            </svg>
+            {{video.rate}}
           </span>
         </p>
       </div>
@@ -46,7 +52,9 @@
       <p class="video-bottom">
         <span class="videoDetail-store">
           {{isStore ? '取消收藏' : '收藏视频'}}
-          <i class="icon" @click="storeVideo" :class="storeIcon"></i>
+          <svg class="icon" aria-hidden="true" @click="storeVideo">
+            <use :xlink:href="storeIcon"></use>
+          </svg>
         </span>
         <span class="videoDetail-rate">
           {{rateAble ? '已' : ''}}评分
@@ -189,7 +197,7 @@
         }
       },
       storeIcon () {
-        return this.isStore ? 'el-icon-my-shoucang1' : 'el-icon-my-shoucang2'
+        return this.isStore ? '#icon-shoucang1' : '#icon-shoucang2'
       }
     },
     methods: {

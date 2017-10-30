@@ -19,7 +19,7 @@
         <div v-if="item.videos.length > 0" :id="'videoType_' + index">
           <h3 class="type-item-wrapper">
             <span class="type-title">{{item.name}}</span>
-            <span class="seeMore">查看更多</span>
+            <router-link tag="span" :to="{name: 'typeDetail', params: {id: item._id}}" class="seeMore">查看更多</router-link>
           </h3>
           <el-row>
             <el-col :span="4" v-for="(v, index) in item.videos" :key="index">

@@ -38,7 +38,11 @@ var VideoSchema = new mongoose.Schema({
   shenhe: {
     type: String,
     default: 'ing'
-  } // 审核过程
+  }, // 审核过程
+  rate: {
+    type: Number,
+    default: 0
+  } // 评分
 })
 
 // 在存储视频数据前进行一些处理
@@ -95,7 +99,7 @@ VideoSchema.statics = {
     return this.count(query).exec()
   },
   findVideo (id) {
-    return this.findById(id)
+    return this.findById(id, {'score': 0})
       .populate({
         path: 'publisher',
         select: 'name avatar'
@@ -113,9 +117,6 @@ VideoSchema.statics = {
     flag = flag ? 1 : -1
     return this.update({'_id': id}, {$inc: {'fav_num': flag}}).exec()
   },
-  addRate (id, rate) {
-    return this.update({'_id': id}, {$push: {'score': rate}}).exec()
-  },
   addComment (vid, cid) {
     return this.update({'_id': vid}, {$push: {'comment': cid}}).exec()
   },
@@ -126,6 +127,33 @@ VideoSchema.statics = {
     return this.find({}, {img: 1, name: 1})
       .sort({'fav_num': -1, 'vplaynum': -1, 'comment.length': -1})
       .limit(5)
+      .exec()
+  },
+  findDetailList (id, flag, page, pageSize) {
+    const skip = (page - 1) * pageSize
+    flag = flag === 'true' ? {'createTime': -1} : {'fav_num': -1, 'vplaynum': -1}
+    return this.find({'type': id})
+      .skip(skip)
+      .limit(pageSize)
+      .sort(flag)
+      .exec()
+  },
+  findVideoRank (flag) {
+    let query
+    if (flag === 'play') {
+      flag = {'vplaynum': -1}
+      query = {'vplaynum': 1}
+    } else if (flag === 'fav') {
+      flag = {'fav_num': -1}
+      query = {'fav_num': 1}
+    } else {
+      flag = {'rate': -1}
+      query = {'rate': 1}
+    }
+    query.name = 1
+    return this.find({}, query)
+      .sort(flag)
+      .limit(10)
       .exec()
   }
 }

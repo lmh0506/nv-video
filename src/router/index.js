@@ -18,6 +18,7 @@ import userStore from '@/components/user/userStore'
 import userSet from '@/components/user/userSet'
 import videoDetail from '@/components/video/videoDetail'
 import search from '@/components/search/search'
+import typeDetail from '@/components/typeDetail/typeDetail'
 
 Vue.use(Router)
 
@@ -115,6 +116,11 @@ export default new Router({
       path: '/video/:id',
       name: 'videoDetail',
       component: videoDetail
+    },
+    {
+      path: '/type/:id',
+      name: 'typeDetail',
+      component: typeDetail
     }
   ]
 })

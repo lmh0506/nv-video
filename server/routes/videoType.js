@@ -67,6 +67,32 @@ router.get('/getList', async (ctx, next) => {
   ctx.body = body
 })
 
+// 获取分类详情列表
+router.get('/detail', async (ctx, next) => {
+  let {id, sort, page, pageSize} = ctx.request.query
+  let body = {
+    error: 0,
+    msg: ''
+  }
+
+  page = page | 0
+  pageSize = pageSize | 0
+
+  try {
+    let list = await Video.findDetailList(id, sort, page, pageSize)
+    let type = await VideoType.findById(id)
+    let total = type.videos.length
+    body.list = list
+    body.total = total
+    body.name = type.name
+  } catch (err) {
+    console.log(err)
+    body.error = 1
+  }
+
+  ctx.body = body
+})
+
 router.use(middleware.loginIntercept)
 
 // 添加分类

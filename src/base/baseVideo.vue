@@ -16,12 +16,16 @@
       
       <p class="base-video-bottom">
         <span class="base-video-playnum">
-          <i class="el-icon-my-bofang1"></i>
-          {{video.vplaynum}}
+          <svg class="icon" aria-hidden="true">
+              <use xlink:href="#icon-bofang1"></use>
+          </svg>
+          &nbsp;&nbsp;{{video.vplaynum}}
         </span>
         <span class="base-video-favnum">
-          <i class="el-icon-my-shoucang"></i>
-          {{video.fav_num}}
+          <svg class="icon" aria-hidden="true">
+              <use xlink:href="#icon-shoucang"></use>
+          </svg>
+          &nbsp;&nbsp;{{video.fav_num}}
         </span>
       </p>
       <div class="base-video-cover" v-if="video.shenhe === 'ing'">审核中。。。</div>
