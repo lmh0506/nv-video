@@ -47,3 +47,7 @@ export const getHotList = () => {
 export const getRankList = () => {
   return axios.get('/api/video/rankList')
 }
+
+export const getMonthList = () => {
+  return axios.get('/api/video/monthList')
+}

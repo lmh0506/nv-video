@@ -9,7 +9,6 @@ import 'element-ui/lib/theme-chalk/index.css'
 import VueScrollTo from 'vue-scrollto'
 
 Vue.use(VueScrollTo)
-
 // You can also pass in the default options
 Vue.use(VueScrollTo, {
   container: 'body',

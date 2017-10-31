@@ -5,7 +5,7 @@
         <h3 class="videoDetail-video-name">{{video.name}}</h3>
         <el-breadcrumb separator-class="el-icon-arrow-right">
           <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
-          <el-breadcrumb-item>{{video.type.name}}</el-breadcrumb-item>
+          <el-breadcrumb-item :to="{name: 'typeDetail', params: {id: video.type._id}}">{{video.type.name}}</el-breadcrumb-item>
         </el-breadcrumb>
         <p class="videoDetail-createTime">
           {{video.createTime}}

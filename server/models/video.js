@@ -125,7 +125,7 @@ VideoSchema.statics = {
   },
   findHotVideo () {
     return this.find({}, {img: 1, name: 1})
-      .sort({'fav_num': -1, 'vplaynum': -1, 'comment.length': -1})
+      .sort({'rate': -1, 'fav_num': -1, 'vplaynum': -1})
       .limit(5)
       .exec()
   },
@@ -155,6 +155,19 @@ VideoSchema.statics = {
       .sort(flag)
       .limit(10)
       .exec()
+  },
+  findMonthList () { // 查找最近一个月的视频列表
+    let now = new Date()
+    let m1 = now.getMonth() + 1 // 这个月
+    let m2 = m1 - 1 // 上个月
+    let y1 = now.getFullYear() // 今年
+    let y2 = m2 < 0 ? y1 - 1 : y1 // 如果上个月是去年就为去年
+    m1 = m1.toString().length === 1 ? '0' + m1.toString() : m1.toString()
+    m2 = m2.toString().length === 1 ? '0' + m2.toString() : m2.toString()
+    let reg1 = y1 + '-' + m1
+    let reg2 = y2 + '-' + m2
+    let reg = new RegExp('(' + reg1 + '|' + reg2 + ')')
+    return this.find({createTime: reg}, {createTime: 1}).exec()
   }
 }
 

@@ -106,12 +106,12 @@ UserSchema.statics = {
       .populate({
         path: 'uploadVideo',
         select: 'name img fav_num vplaynum shenhe',
-        options: {limit: 12, sort: {fav_num: -1, vplaynum: -1}}
+        options: {limit: 12, sort: {rate: -1, fav_num: -1, vplaynum: -1}}
       })
       .populate({
         path: 'storeVideo',
         select: 'name img fav_num vplaynum shenhe',
-        options: {limit: 12, sort: {fav_num: -1, vplaynum: -1}}
+        options: {limit: 12, sort: {rate: -1, fav_num: -1, vplaynum: -1}}
       })
       .exec()
   }

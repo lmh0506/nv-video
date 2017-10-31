@@ -108,6 +108,50 @@ router.get('/rankList', async (ctx, next) => {
   ctx.body = body
 })
 
+router.get('/monthList', async (ctx, next) => {
+  let body = {
+    error: 0,
+    msg: ''
+  }
+
+  try {
+    let list = await Video.findMonthList()
+    let today = 0
+    let three = 0
+    let week = 0
+    let month = 0
+    let now = Date.now()
+
+    list.forEach(v => {
+      let time = new Date(v.createTime)
+      let delat = (now - time) / 1000 / 60 / 60 / 24
+      if (delat <= 1) {
+        today++
+        three++
+        week++
+        month++
+      } else if (delat <= 3) {
+        three++
+        week++
+        month++
+      } else if (delat <= 7) {
+        week++
+        month++
+      } else if (delat <= 30) {
+        month++
+      }
+    })
+
+    let result = [today, three, week, month]
+    body.result = result
+  } catch (err) {
+    console.log(err)
+    body.error = 1
+  }
+
+  ctx.body = body
+})
+
 router.use(middleware.loginIntercept)
 
 // 视频名称是否存在
