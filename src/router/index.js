@@ -11,6 +11,7 @@ import videoType from '@/components/admin/videoType'
 import videoAudit from '@/components/admin/videoAudit'
 import videoList from '@/components/admin/videoList'
 import adminIndex from '@/components/admin/adminIndex'
+import setAdmin from '@/components/admin/setAdmin'
 import forgetPwd from '@/components/forgetPwd/forgetPwd'
 import userIndex from '@/components/user/userIndex'
 import userVideo from '@/components/user/userVideo'
@@ -19,6 +20,7 @@ import userSet from '@/components/user/userSet'
 import videoDetail from '@/components/video/videoDetail'
 import search from '@/components/search/search'
 import typeDetail from '@/components/typeDetail/typeDetail'
+import noFound from '@/components/404'
 
 Vue.use(Router)
 
@@ -109,6 +111,11 @@ export default new Router({
           path: 'videoList',
           name: 'videoList',
           component: videoList
+        },
+        {
+          path: 'setAdmin',
+          name: 'setAdmin',
+          component: setAdmin
         }
       ]
     },
@@ -121,6 +128,15 @@ export default new Router({
       path: '/type/:id',
       name: 'typeDetail',
       component: typeDetail
+    },
+    {
+      path: '/404',
+      name: 'noFound',
+      component: noFound
+    },
+    {
+      path: '*',
+      component: noFound
     }
   ]
 })

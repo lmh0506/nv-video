@@ -1,5 +1,8 @@
 <template>
   <div class="adminIndex">
+    <el-breadcrumb separator-class="el-icon-arrow-right">
+      <el-breadcrumb-item :to="{ path: '/admin/' }">首页</el-breadcrumb-item>
+    </el-breadcrumb>
     <div class="week-canvas charts">
       <IEcharts :option="bar"></IEcharts>
     </div>
@@ -14,6 +17,8 @@
   import 'echarts/lib/chart/bar'
   import 'echarts/lib/chart/pie'
   import 'echarts/lib/component/title'
+  import 'echarts/lib/component/tooltip'
+  import 'echarts/lib/component/legend'
   import {getMonthList} from '@/api/Video'
   import {getTypeList} from '@/api/VideoType'
   import {ERR_OK} from '@/config/index'
@@ -31,15 +36,14 @@
           },
           yAxis: {},
           series: [{
-            name: 'Sales',
+            name: '视频上传数',
             type: 'bar',
             data: []
           }]
         },
         pie: {
           title: {
-            text: '某站点用户访问来源',
-            subtext: '纯属虚构',
+            text: '各分类视频数量占比',
             x: 'center'
           },
           tooltip: {
@@ -48,12 +52,12 @@
           },
           legend: {
             orient: 'vertical',
-            left: 'right',
+            right: '13%',
             data: []
           },
           series: [
             {
-              name: '访问来源',
+              name: '视频数量',
               type: 'pie',
               radius: '55%',
               center: ['50%', '60%'],
@@ -116,6 +120,7 @@
        width: 50%;
        height: 400px;
        float: left;
+       margin-top: 20px;
     }
   }
 </style>

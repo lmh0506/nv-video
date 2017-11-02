@@ -465,6 +465,63 @@ router.get('/video/myHotVideo', async (ctx, next) => {
   ctx.body = body
 })
 
+router.get('/userAdminList', async (ctx, next) => {
+  let body = {
+    error: 0,
+    msg: ''
+  }
+
+  try {
+    let list = await User.findUserAdmin()
+    body.result = list
+  } catch (err) {
+    console.log(err)
+    body.error = 1
+  }
+
+  ctx.body = body
+})
+
+router.post('/setAdmin', async (ctx, next) => {
+  let {user, flag} = ctx.request.body
+  let body = {
+    error: 0,
+    msg: ''
+  }
+
+  try {
+    flag = flag === 'left' ? 0 : 1
+    user.forEach(async id => {
+      await User.setAdmin(id, flag)
+    })
+  } catch (err) {
+    console.log(err)
+    body.error = 1
+  }
+
+  ctx.body = body
+})
+
+router.post('/isAdmin', async (ctx, next) => {
+  let {id} = ctx.session.user
+  let body = {
+    error: 0,
+    msg: ''
+  }
+
+  try {
+    let user = await User.isAdmin(id)
+    if (!user) {
+      body.error = 10001
+    }
+  } catch (err) {
+    console.log(err)
+    body.error = 1
+  }
+
+  ctx.body = body
+})
+
 module.exports = router
 
 function randomNum (min, max) {

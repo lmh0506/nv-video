@@ -114,6 +114,15 @@ UserSchema.statics = {
         options: {limit: 12, sort: {rate: -1, fav_num: -1, vplaynum: -1}}
       })
       .exec()
+  },
+  findUserAdmin () {
+    return this.find({}, {name: 1, role: 1}).exec()
+  },
+  setAdmin (id, flag) {
+    return this.update({'_id': id}, {role: flag})
+  },
+  isAdmin (id) {
+    return this.findOne({'_id': id, role: 1}).exec()
   }
 }
 

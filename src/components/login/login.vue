@@ -11,10 +11,10 @@
         </el-form-item>
         <el-form-item prop="yzm">
           <yzm @draw = 'draw'></yzm>
-          <el-input v-model="ruleForm.yzm" class="yzm-input"></el-input>
+          <el-input v-model="ruleForm.yzm" @keyup.native.enter="login" class="yzm-input"></el-input>
         </el-form-item>
         <el-form-item class="login-btn">
-          <el-button type="primary" style="padding:12px 32px" @click="login">登录</el-button>
+          <el-button type="primary" style="padding:12px 32px"  @click="login">登录</el-button>
           <el-button style="margin-left:75px;">          
             <router-link to="/registe">快速注册</router-link>
           </el-button>

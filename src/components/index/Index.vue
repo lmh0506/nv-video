@@ -6,7 +6,7 @@
       </el-carousel-item>
     </el-carousel>
     <div class="search-wrapper">
-      <el-form>
+      <el-form @submit.prevent.native="search">
         <el-form-item>
           <el-input placeholder="请输入视频名称" v-model="searchKey">
             <el-button slot="append" icon="el-icon-search" @click="search"></el-button>

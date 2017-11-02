@@ -5,7 +5,7 @@
       <el-breadcrumb-item>视频管理</el-breadcrumb-item>
       <el-breadcrumb-item>视频列表</el-breadcrumb-item>
     </el-breadcrumb>
-    <el-form :inline="true" class="demo-form-inline">
+    <el-form :inline="true" class="demo-form-inline" @submit.prevent.native="search">
       <el-form-item>
         <el-input v-model="searchKey" placeholder="搜索视频名称"></el-input>
       </el-form-item>

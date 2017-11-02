@@ -12,22 +12,49 @@
               active-text-color="#ffd04b"
               :router = "router">
               <el-menu-item index="/admin/">
-                <i class="el-icon-menu"></i>
+                <svg class="icon" aria-hidden="true">
+                  <use xlink:href="#icon-zhuye"></use>
+                </svg>
                 <span slot="title">首页</span>
               </el-menu-item>
               <el-menu-item index="/admin/userList">
-                <i class="el-icon-menu"></i>
+                <svg class="icon" aria-hidden="true">
+                  <use xlink:href="#icon-yonghuquntiliebiao"></use>
+                </svg>
                 <span slot="title">用户列表</span>
+              </el-menu-item>
+              <el-menu-item index="/admin/setAdmin">
+                <svg class="icon" aria-hidden="true">
+                  <use xlink:href="#icon-guanliyuanzhanghaoshezhi"></use>
+                </svg>
+                <span slot="title">设置管理员</span>
               </el-menu-item>
               <el-submenu index=''>
                 <template slot="title">
-                  <i class="el-icon-setting"></i>
+                  <svg class="icon" aria-hidden="true">
+                    <use xlink:href="#icon-duanshipinzhihangguanli"></use>
+                  </svg>
                   <span>视频管理</span>
                 </template>
                 <el-menu-item-group>
-                  <el-menu-item index="/admin/videoType">类型管理</el-menu-item>
-                  <el-menu-item index="/admin/videoAudit">视频审核</el-menu-item>
-                  <el-menu-item index="/admin/videoList">视频列表</el-menu-item>
+                  <el-menu-item index="/admin/videoType">
+                    <svg class="icon" aria-hidden="true">
+                      <use xlink:href="#icon-ClassificationManagement"></use>
+                    </svg>
+                    类型管理
+                  </el-menu-item>
+                  <el-menu-item index="/admin/videoAudit">
+                    <svg class="icon" aria-hidden="true">
+                      <use xlink:href="#icon-shipin-shenhezhong"></use>
+                    </svg>
+                    视频审核
+                  </el-menu-item>
+                  <el-menu-item index="/admin/videoList">
+                    <svg class="icon" aria-hidden="true">
+                      <use xlink:href="#icon-shipinliebiao"></use>
+                    </svg>
+                    视频列表
+                  </el-menu-item>
                 </el-menu-item-group>
               </el-submenu>
             </el-menu>
@@ -42,6 +69,9 @@
 </template>
 
 <script>
+  import {isAdmin} from '@/api/User'
+  import {ERR_OK, NO_LOGIN} from '@/config/index'
+
   export default {
     data () {
       return {
@@ -52,6 +82,17 @@
       activeRoute () {
         return this.$route.path
       }
+    },
+    beforeRouteEnter (to, from, next) {
+      isAdmin().then(res => {
+        if (res.data.error === ERR_OK) {
+          next()
+        } else if (res.data.error === NO_LOGIN) {
+          next('/login')
+        } else {
+          next('/404')
+        }
+      })
     }
   }
 </script>

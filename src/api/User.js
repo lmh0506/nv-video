@@ -65,3 +65,15 @@ export const deleteStoreVideo = (uid, vid) => {
 export const getMyHotVideo = (id) => {
   return axios.get('/api/user/video/myHotVideo', {params: {id}})
 }
+
+export const getUserAdmin = () => {
+  return axios.get('/api/user/userAdminList')
+}
+
+export const setAdmin = (user, flag) => {
+  return axios.post('/api/user/setAdmin', {user, flag})
+}
+
+export const isAdmin = () => {
+  return axios.post('/api/user/isAdmin')
+}
