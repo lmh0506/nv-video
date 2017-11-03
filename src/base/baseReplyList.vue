@@ -3,7 +3,7 @@
     <div v-if="comment.reply.length > 0">
       <div class="reply-wrapper" v-for="(reply, rindex) in comment.reply" :key="rindex">
         <div class="reply-left">
-          <router-link tag="img" :to="{name: 'userIndex', params: {id: reply.from_user._id}}" :src="reply.from_user.avatar" width="24" height="24" alt=""></router-link>
+          <router-link tag="img" :to="{name: 'userIndex', params: {id: reply.from_user._id}}" v-lazy="reply.from_user.avatar" width="24" height="24" alt=""></router-link>
         </div>
         <div class="reply-right">
           <h6 class="reply-right-head">

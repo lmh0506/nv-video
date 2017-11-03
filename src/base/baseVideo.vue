@@ -3,13 +3,13 @@
     <div class="base-video-main">
       <template v-if="videoRouter">
         <router-link tag="div" :to="{name: 'videoDetail', params: {id: video._id}}" class="base-video-img-wrapper">
-          <img :src="video.img" alt="" class="base-video-img">
+          <img v-lazy="video.img" alt="" class="base-video-img">
         </router-link>
         <router-link tag="p" :to="{name: 'videoDetail', params: {id: video._id}}" class="base-video-title">{{video.name}}</router-link>
       </template>
       <template v-else>
         <div class="base-video-img-wrapper">
-          <img :src="video.img" alt="" class="base-video-img">
+          <img v-lazy="video.img" alt="" class="base-video-img">
         </div>
         <p class="base-video-title">{{video.name}}</p>
       </template>

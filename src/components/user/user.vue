@@ -2,7 +2,7 @@
   <div class="user-wrapper">
     <div class="user-banner">
       <div class="user-info">
-        <img  class="user-avatar" :src="owner.avatar" alt="" width="100" height="100">
+        <img  class="user-avatar" v-lazy="avatarSrc" alt="" width="100" height="100">
         <div class="user-name">
           {{owner.name}}
         </div>
@@ -59,7 +59,10 @@
       },
       ...mapState([
         'user'
-      ])
+      ]),
+      avatarSrc () {
+        return this.user.id === this.owner.id ? this.user.avatar ? this.user.avatar : this.owner.avatar : this.owner.avatar
+      }
     },
     methods: {
       routerIndex (index) {

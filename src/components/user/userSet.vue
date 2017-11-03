@@ -33,7 +33,7 @@
             :before-upload="beforeAvatarUpload"
             :on-error="handleAvatarError">
             
-            <img v-if="imageUrl" :src="imageUrl" class="avatar">
+            <img v-if="imageUrl" v-lazy="imageUrl" class="avatar">
             <div class="upload-wrapper" v-else>
               <i class="el-icon-upload"></i>
               <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
@@ -76,7 +76,7 @@
                 :on-change="VideoImgChange"
                 :on-success="videoImgSuccess">
                 
-                <img v-if="videoImg" :src="videoImg" class="video-img">
+                <img v-if="videoImg" v-lazy="videoImg" class="video-img">
                 <div class="upload-wrapper" v-else>
                   <i class="el-icon-upload"></i>
                   <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>

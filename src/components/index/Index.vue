@@ -2,7 +2,7 @@
   <div class="index-wrapper">
     <el-carousel class="carousel" :interval="5000" trigger="click" type="card" height="300px">
       <el-carousel-item v-for="item in hotList" :key="item._id">
-        <router-link tag="img" :to="{name: 'videoDetail', params: {id: item._id}}" :src="item.img" width="100%" height="100%" alt=""></router-link>
+        <router-link tag="img" :to="{name: 'videoDetail', params: {id: item._id}}" v-lazy="item.img" width="100%" height="100%" alt=""></router-link>
       </el-carousel-item>
     </el-carousel>
     <div class="search-wrapper">

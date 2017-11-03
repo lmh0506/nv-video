@@ -60,6 +60,7 @@
     "url-loader": "^0.5.8",
     "vue-dplayer": "^0.0.3",
     "vue-echarts-v3": "^1.0.5",
+    "vue-lazyload": "^1.1.4",
     "vue-loader": "^13.0.4",
     "vue-scrollto": "^2.7.8",
     "vue-style-loader": "^3.0.1",

@@ -33,7 +33,7 @@
       </div>
       <div class="videoDetail-right-user">
         <div class="user-avatar-wrapper">
-          <router-link tag="img" :to="{name: 'userIndex', params: {id: video.publisher._id}}" :src="video.publisher.avatar">
+          <router-link tag="img" :to="{name: 'userIndex', params: {id: video.publisher._id}}" v-lazy="video.publisher.avatar">
           </router-link>
         </div>
         <p class="user-name">
@@ -72,7 +72,7 @@
       <div class="comment-list" v-if="commentList.length > 0">
         <div class="comment-wrapper" v-for="(comment, cindex) in commentList" :key="cindex">
           <div class="comment-left">
-            <router-link tag="img" :to="{name: 'userIndex', params: {id: comment.from_user._id}}" :src="comment.from_user.avatar" width="86" height="86" alt=""></router-link>
+            <router-link tag="img" :to="{name: 'userIndex', params: {id: comment.from_user._id}}" v-lazy="comment.from_user.avatar" width="86" height="86" alt=""></router-link>
           </div>
           <div class="comment-right">
             <router-link tag="h4" :to="{name: 'userIndex', params: {id: comment.from_user._id}}" class="comment-userName">

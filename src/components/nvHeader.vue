@@ -17,7 +17,7 @@
       </el-menu-item>
       <li class='login-info'>
         <router-link tag="div" class='item' v-if='isLogin' :to="{name:'userIndex', params: { id: user.id }}">
-          <img class="avatar" height="50" width="50" :src='user.avatar'>
+          <img class="avatar" height="50" width="50" v-lazy='user.avatar'>
         </router-link>
         <router-link tag="div" class='item' v-if='isLogin' :to="{name:'userIndex', params: { id: user.id }}">
           {{user.name}}

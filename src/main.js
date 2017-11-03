@@ -8,6 +8,8 @@ import 'element-ui/lib/theme-chalk/index.css'
 
 import VueScrollTo from 'vue-scrollto'
 
+import VueLazyLoad from 'vue-lazyload'
+
 Vue.use(VueScrollTo)
 // You can also pass in the default options
 Vue.use(VueScrollTo, {
@@ -20,6 +22,10 @@ Vue.use(VueScrollTo, {
   onCancel: false,
   x: false,
   y: true
+})
+
+Vue.use(VueLazyLoad, {
+  loading: '/static/loading-svg/loading-spinning-bubbles.svg'
 })
 
 Vue.config.productionTip = false
