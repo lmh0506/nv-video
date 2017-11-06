@@ -24,12 +24,12 @@
       <el-table-column
         label="类型名"
         width="180">
-        <template scope="scope">
+        <template slot-scope="scope">
           <span style="margin-left: 10px">{{ scope.row.name }}</span>
         </template>
       </el-table-column>
       <el-table-column label="操作">
-        <template scope="scope">
+        <template slot-scope="scope">
           <el-button
             size="small"
             @click="showEditType(scope.$index)">编辑</el-button>

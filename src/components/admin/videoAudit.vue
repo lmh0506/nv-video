@@ -20,28 +20,28 @@
       <el-table-column
         label="视频名称"
         width="180">
-        <template scope="scope">
+        <template slot-scope="scope">
           <span style="margin-left: 10px">{{ scope.row.name }}</span>
         </template>
       </el-table-column>
       <el-table-column
         label="作者昵称"
         width="180">
-        <template scope="scope">
+        <template slot-scope="scope">
           <span style="margin-left: 10px">{{ scope.row.publisher.name }}</span>
         </template>
       </el-table-column>
       <el-table-column
         label="视频类型"
         width="180">
-        <template scope="scope">
+        <template slot-scope="scope">
           <el-tag
           type='primary'
           close-transition>{{scope.row.type.name}}</el-tag>
         </template>
       </el-table-column>
       <el-table-column label="操作">
-        <template scope="scope">
+        <template slot-scope="scope">
           <el-button
             size="small"
             @click="showVideoDialog(scope.row)">查看</el-button>
