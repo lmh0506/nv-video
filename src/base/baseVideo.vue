@@ -30,7 +30,7 @@
       </p>
       <div class="base-video-cover" v-if="video.shenhe === 'ing'">审核中。。。</div>
       <div class="base-video-cover" v-else-if="video.shenhe !== '审核通过' && video.shenhe !== 'ing'">{{video.shenhe}}</div>
-      <div v-if="edit" class="el-icon-circle-cross delete-btn" @click="deleteVideo"></div>
+      <div v-if="edit" class="el-icon-circle-close delete-btn" @click="deleteVideo"></div>
     </div>
   </div>
 </template>

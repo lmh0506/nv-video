@@ -15,7 +15,7 @@
         </el-form-item>
         <el-form-item class="login-btn">
           <el-button type="primary" style="padding:12px 32px"  @click="login">登录</el-button>
-          <el-button style="margin-left:75px;">          
+          <el-button>          
             <router-link to="/registe">快速注册</router-link>
           </el-button>
         </el-form-item>
