@@ -3,22 +3,22 @@
     <el-breadcrumb separator-class="el-icon-arrow-right">
       <el-breadcrumb-item :to="{ path: '/admin/' }">首页</el-breadcrumb-item>
     </el-breadcrumb>
-    <div class="week-canvas charts">
+    <!-- <div class="week-canvas charts">
       <IEcharts :option="bar"></IEcharts>
     </div>
     <div class="type-canvas charts">
       <IEcharts :option="pie"></IEcharts>
-    </div>
+    </div> -->
   </div>
 </template>
 
 <script>
-  import IEcharts from 'vue-echarts-v3/src/lite.vue'
-  import 'echarts/lib/chart/bar'
-  import 'echarts/lib/chart/pie'
-  import 'echarts/lib/component/title'
-  import 'echarts/lib/component/tooltip'
-  import 'echarts/lib/component/legend'
+  // import IEcharts from 'vue-echarts-v3/src/lite.vue'
+  // import 'echarts/lib/chart/bar'
+  // import 'echarts/lib/chart/pie'
+  // import 'echarts/lib/component/title'
+  // import 'echarts/lib/component/tooltip'
+  // import 'echarts/lib/component/legend'
   import {getMonthList} from '@/api/Video'
   import {getTypeList} from '@/api/VideoType'
   import {ERR_OK} from '@/config/index'
@@ -103,7 +103,7 @@
       }
     },
     components: {
-      IEcharts
+      // IEcharts
     },
     mounted () {
       this.getMonthList()

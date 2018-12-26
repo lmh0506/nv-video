@@ -1,79 +1,80 @@
 import axios from 'axios'
+const base = '/api/user/'
 
 export const checkExist = params => {
-  return axios.post('/api/user/exist', params)
+  return axios.post(base + 'exist', params)
 }
 
 export const registeUser = form => {
   let {userName, passWord, email, name} = form
-  return axios.post('/api/user/registe', {userName, passWord, email, name})
+  return axios.post(base + 'registe', {userName, passWord, email, name})
 }
 
 export const loginUser = form => {
   let {userName, passWord} = form
-  return axios.post('/api/user/login', {userName, passWord})
+  return axios.post(base + 'login', {userName, passWord})
 }
 
 export const checkLogin = () => {
-  return axios.get('/api/user/checkLogin')
+  return axios.get(base + 'checkLogin')
 }
 
 export const loginOut = () => {
-  return axios.get('/api/user/loginOut')
+  return axios.get(base + 'loginOut')
 }
 
 export const getUserList = (searchKey, page, pageSize) => {
-  return axios.get('/api/user/getList', {params: {searchKey, page, pageSize}})
+  return axios.get(base + 'getList', {params: {searchKey, page, pageSize}})
 }
 
 export const deleteUser = (id) => {
-  return axios.post('/api/user/delete', {id})
+  return axios.post(base + 'delete', {id})
 }
 
 export const updateUser = (id, userForm) => {
-  return axios.post('/api/user/update', {id, userForm})
+  return axios.post(base + 'update', {id, userForm})
 }
 
 export const sendEmail = email => {
-  return axios.post('/api/user/sendEmail', {email})
+  return axios.post(base + 'sendEmail', {email})
 }
 
 export const checkEmailYzm = form => {
-  return axios.post('/api/user/checkEmailYzm', form)
+  return axios.post(base + 'checkEmailYzm', form)
 }
 
 export const setNewPwd = (email, passWord) => {
-  return axios.post('/api/user/setNewPwd', {email, passWord})
+  return axios.post(base + 'setNewPwd', {email, passWord})
 }
 
 export const getUser = id => {
-  return axios.get('/api/user/getUser', {params: {id}})
+  return axios.get(base + 'getUser', {params: {id}})
 }
 
 export const getIsStoreAndRate = (uid, vid) => {
-  return axios.get('/api/user/video/isStoreAndRate', {params: {uid, vid}})
+  return axios.get(base + 'video/isStoreAndRate', {params: {uid, vid}})
 }
 
 export const getStoreList = (id, page, pageSize) => {
-  return axios.get('/api/user/video/storeList', {params: {id, page, pageSize}})
+  return axios.get(base + 'video/storeList', {params: {id, page, pageSize}})
 }
 
 export const deleteStoreVideo = (uid, vid) => {
-  return axios.post('/api/user/video/removeStore', {uid, vid})
+  return axios.post(base + 'video/removeStore', {uid, vid})
 }
 
 export const getMyHotVideo = (id) => {
-  return axios.get('/api/user/video/myHotVideo', {params: {id}})
+  return axios.get(base + 'video/myHotVideo', {params: {id}})
 }
 
 export const getUserAdmin = () => {
-  return axios.get('/api/user/userAdminList')
+  return axios.get(base + 'userAdminList')
 }
 
 export const setAdmin = (user, flag) => {
-  return axios.post('/api/user/setAdmin', {user, flag})
+  return axios.post(base + 'setAdmin', {user, flag})
 }
 
 export const isAdmin = () => {
-  return axios.post('/api/user/isAdmin')
+  return axios.post(base + 'isAdmin')
 }
